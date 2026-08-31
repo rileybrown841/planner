@@ -11,7 +11,25 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Planner — project notes
 
 Single-user personal planner PWA. Full plan and phased build order in
-`projectplan.md`. Phases 1–2 done; build subsequent phases in order.
+`projectplan.md`. Phases 1–3 done; build subsequent phases in order.
+Repo `github.com/rileybrown841/planner` (`main`).
+
+## Phase 3 additions (tasks, extracurriculars)
+
+- **Extracurriculars** are global (no semester link, no archive) — plain CRUD like
+  classes minus the guard. `src/lib/{data,actions}/extracurriculars.ts`.
+- **Tasks** link to a class XOR an activity via one `link` form field
+  (`"class:<id>" | "activity:<id>" | ""`, parsed in `taskSchema`). `assessment_id`
+  stays unused until Phase 5.
+- **Timezone:** `due_date` is stored as a UTC ISO instant built **on the client**
+  (`TaskForm` hidden `due_at`); date-only → local 23:59. All bucket / "overdue"
+  math is client-side (`src/lib/dates.ts`) so it uses the viewer's day boundary —
+  never compute task urgency on the server.
+- **Optimistic complete:** `TaskBoard` / `TaskChecklist` use React 19
+  `useOptimistic` + `useTransition` around the `setTaskStatus` action.
+- **Quick-add:** `<QuickAddFab>` lives in `(app)/layout.tsx` — a `fixed` FAB +
+  native `<dialog>`; `createTaskQuick` returns `succeeded()` (no redirect) and the
+  dialog closes itself.
 
 ## Read / mutate pattern (Phase 2 — copy this for every feature)
 

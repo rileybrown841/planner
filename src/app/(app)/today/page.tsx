@@ -3,14 +3,16 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { displayName } from "@/lib/user";
 import { getActiveSemester } from "@/lib/data/semesters";
+import { listOpenDatedTasks } from "@/lib/data/tasks";
 import { buttonClass } from "@/components/ui/button";
+import { DueSoon } from "@/components/task/due-soon";
 
 export const metadata: Metadata = { title: "Today" };
 
 const ROADMAP = [
   { phase: "Phase 1", label: "Foundation — auth, PWA, navigation shell", done: true },
   { phase: "Phase 2", label: "Semesters & classes", done: true },
-  { phase: "Phase 3", label: "Tasks — quick capture & triage" },
+  { phase: "Phase 3", label: "Tasks & extracurriculars", done: true },
   { phase: "Phase 4", label: "Unified calendar" },
   { phase: "Phase 5", label: "Exam & project tracker" },
   { phase: "Phase 6", label: "Day-at-a-glance dashboard" },
@@ -20,7 +22,11 @@ const ROADMAP = [
 ];
 
 export default async function TodayPage() {
-  const [user, activeSemester] = await Promise.all([requireUser(), getActiveSemester()]);
+  const [user, activeSemester, datedTasks] = await Promise.all([
+    requireUser(),
+    getActiveSemester(),
+    listOpenDatedTasks(),
+  ]);
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
@@ -38,6 +44,20 @@ export default async function TodayPage() {
           })}
         </p>
       </header>
+
+      <div className="rounded-2xl border border-black/10 bg-white/50 p-5 dark:border-white/10 dark:bg-white/[0.02]">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+            Overdue &amp; today
+          </h2>
+          <Link href="/tasks" className="text-xs text-indigo-600 hover:underline dark:text-indigo-400">
+            All tasks →
+          </Link>
+        </div>
+        <div className="mt-2">
+          <DueSoon tasks={datedTasks} />
+        </div>
+      </div>
 
       <div className="rounded-2xl border border-black/10 bg-white/50 p-5 dark:border-white/10 dark:bg-white/[0.02]">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">

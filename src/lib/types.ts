@@ -44,3 +44,44 @@ export interface Class {
 export interface ClassWithSemester extends Class {
   semester: Semester;
 }
+
+export type ActivityType = "club" | "job" | "sport" | "volunteer" | "other";
+
+export interface Extracurricular {
+  id: string;
+  user_id: string;
+  name: string;
+  type: ActivityType;
+  color: string | null;
+  schedule: ClassMeeting[];
+  created_at: string;
+  updated_at: string;
+}
+
+export type TaskPriority = "low" | "medium" | "high" | "urgent";
+export type TaskStatus = "todo" | "in_progress" | "done";
+
+export interface Task {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  due_date: string | null;
+  priority: TaskPriority;
+  status: TaskStatus;
+  class_id: string | null;
+  extracurricular_id: string | null;
+  assessment_id: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Minimal shapes joined onto a task for display (colour chip + label). */
+export type TaskClassLink = { id: string; name: string; color: string | null };
+export type TaskActivityLink = TaskClassLink & { type: ActivityType };
+
+export interface TaskWithLinks extends Task {
+  class: TaskClassLink | null;
+  extracurricular: TaskActivityLink | null;
+}

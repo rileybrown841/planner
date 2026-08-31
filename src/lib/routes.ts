@@ -14,3 +14,8 @@ export const newClassHref = (semesterId: string) =>
 /** List view for a semester's classes: the active one lives at /classes. */
 export const classesHref = (semesterId: string, isActive: boolean): Route =>
   isActive ? "/classes" : semesterHref(semesterId);
+
+export const taskHref = (id: string) => `/tasks/${id}` as Route;
+export const editTaskHref = (id: string) => `/tasks/${id}/edit` as Route;
+export const activityHref = (id: string) => `/extracurriculars/${id}` as Route;
+export const editActivityHref = (id: string) => `/extracurriculars/${id}/edit` as Route;

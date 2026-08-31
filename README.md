@@ -9,20 +9,19 @@ Supabase.
 See [`projectplan.md`](projectplan.md) for the full product plan and phased build
 order.
 
-## Status — Phases 1–2 complete
+## Status — Phases 1–3 complete
 
 | Phase | Area | State |
 | --- | --- | --- |
 | 1 | Next.js 16 + Tailwind v4 + TS, PWA, nav shell | ✅ |
 | 1 | Single-user magic-link auth + route protection | ✅ |
 | 1 | DB schema + Row Level Security (`0001_initial_schema.sql`) | ✅ applied |
-| 2 | Semesters — create / edit / activate / archive / delete | ✅ |
-| 2 | Classes — CRUD with code, instructor, colour, location, meeting times | ✅ |
-| 2 | Archived semesters + their classes are read-only | ✅ |
-| 2 | Settings — account, display name | ✅ |
+| 2 | Semesters + classes CRUD; archived = read-only; settings | ✅ |
+| 3 | Tasks — app-wide quick-add, full CRUD, priority/status, date-bucket triage, filters | ✅ |
+| 3 | Extracurriculars — CRUD (clubs/jobs/sports), tasks link to a class or activity | ✅ |
 
-Later phases (`/calendar`, `/tasks`, `/exams`, `/habits`, `/budget`) are routable
-and show a placeholder naming the phase they land in.
+Later phases (`/calendar`, `/exams`, `/habits`, `/budget`) are routable and show a
+placeholder naming the phase they land in.
 
 ## Tech stack
 
@@ -113,12 +112,13 @@ Repo: <https://github.com/rileybrown841/planner> (branch `main`).
 src/
   proxy.ts                  Auth session refresh + route guard (Next 16 "middleware")
   app/
-    (app)/                  Signed-in shell — layout gates on requireUser()
-      today/                Greeting + active semester + build roadmap
-      classes/              Active semester's classes; new/[id]/[id]/edit
-      semesters/            All semesters; [id] detail; new/[id]/edit
+    (app)/                  Signed-in shell — layout gates on requireUser() + <QuickAddFab>
+      today/                Greeting + overdue/today tasks + active semester
+      tasks/                Bucketed triage board; new/[id]/[id]/edit
+      extracurriculars/     Clubs/jobs/sports CRUD; [id]/[id]/edit
+      classes/ semesters/   Phase 2 — class & semester CRUD
       settings/             Account + display name
-      calendar/ tasks/ exams/ habits/ budget/   later-phase placeholders
+      calendar/ exams/ habits/ budget/   later-phase placeholders
     login/  auth/callback/  Magic-link sign-in + single-user check
     offline/  manifest.ts   PWA offline page + manifest
   components/
@@ -129,8 +129,9 @@ src/
     supabase/              client.ts / server.ts / proxy.ts / env.ts
     auth.ts                getUser / requireUser / isAllowedEmail
     data/                  server-only read helpers + guards.ts (archived check)
-    actions/               Server Actions (semesters, classes, settings, auth)
+    actions/               Server Actions (semesters, classes, tasks, extracurriculars, settings, auth)
     schemas.ts form.ts     zod input schemas + ActionResult helpers
+    dates.ts priority.ts   client-side task bucket / relative-due + priority helpers
     routes.ts nav.tsx      typed dynamic-route builders + nav config
 supabase/
   migrations/0001_initial_schema.sql   (applied)

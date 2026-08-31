@@ -4,6 +4,7 @@ import { displayName } from "@/lib/user";
 import { Sidebar } from "@/components/nav/sidebar";
 import { BottomNav } from "@/components/nav/bottom-nav";
 import { MobileHeader } from "@/components/nav/mobile-header";
+import { QuickAddFab } from "@/components/quick-add/quick-add-fab";
 
 // Every screen in here is per-user and auth-gated — never prerender it.
 export const dynamic = "force-dynamic";
@@ -29,6 +30,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         </main>
         <BottomNav />
       </div>
+
+      <QuickAddFab />
     </div>
   );
 }

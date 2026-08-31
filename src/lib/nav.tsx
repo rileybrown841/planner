@@ -8,6 +8,7 @@ import {
   ListChecks,
   Settings,
   Sparkles,
+  Users,
   Wallet,
 } from "lucide-react";
 
@@ -34,6 +35,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: BookOpen,
     alsoActiveFor: ["/semesters"],
   },
+  { href: "/extracurriculars", label: "Extracurriculars", icon: Users },
 ];
 
 export const SECONDARY_NAV_ITEMS: NavItem[] = [
