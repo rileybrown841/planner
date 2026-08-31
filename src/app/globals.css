@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbfbfd;
+  --foreground: #18181b;
 }
 
 @theme inline {
@@ -19,8 +19,15 @@
   }
 }
 
+html {
+  color-scheme: light dark;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Stop the whole page rubber-banding on iOS when installed. */
+  overscroll-behavior-y: none;
 }

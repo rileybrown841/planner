@@ -7,3 +7,50 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+# Planner — project notes
+
+Single-user personal planner PWA. Full plan and phased build order in
+`projectplan.md`. Phases 1–2 done; build subsequent phases in order.
+
+## Read / mutate pattern (Phase 2 — copy this for every feature)
+
+- **Reads:** server-only helpers in `src/lib/data/<area>.ts`, wrapped in React
+  `cache()`, each calls `requireUser()` then queries via the RLS'd server client.
+  Type results with `.returns<T>()` / `.maybeSingle<T>()` against hand-written
+  interfaces in `src/lib/types.ts` (no generated Supabase types yet).
+- **Mutations:** Server Actions in `src/lib/actions/<area>.ts` (`"use server"`).
+  Start with `requireUser()`, validate FormData with a zod schema from
+  `src/lib/schemas.ts`, write, then `revalidatePath(...)` + `redirect(...)`.
+  Form actions return `ActionResult` (`src/lib/form.ts`); simple toggle/delete
+  actions are `(FormData) => Promise<void>` and bounce back with `?error=` on failure.
+- **Forms:** Client Components using `useActionState`; bound actions
+  (`updateX.bind(null, id)`) passed as the `action` prop. Shared UI:
+  `src/components/ui/{button,form-field}.tsx`.
+- **Dynamic route hrefs:** build them with helpers in `src/lib/routes.ts` —
+  `typedRoutes` can't infer a bare template literal passed through a prop.
+- **Archived semesters are read-only:** `assertSemesterWritable()` from
+  `src/lib/data/guards.ts` at the top of every semester/class mutation; UI hides
+  edit/delete controls and shows `<ReadOnlyBanner>`.
+- **Active semester** = the `semesters` row with `is_active = true`. Switch it via
+  `activateSemester`. `/classes` shows the active one; `/semesters/[id]` shows any.
+
+## Conventions established in Phase 1
+
+- **Auth gate:** `requireUser()` / `getUser()` from `src/lib/auth.ts` in every
+  Server Component, Server Action and Route Handler that touches user data.
+  `src/proxy.ts` only does an optimistic redirect — it is not the security layer.
+- **Single-user lock:** `ALLOWED_EMAIL` env var + `shouldCreateUser: false` +
+  Supabase signups disabled + RLS. Keep all four.
+- **Supabase clients:** `src/lib/supabase/{client,server,proxy}.ts`. Never import
+  `server.ts` into a Client Component. Env var for the key is
+  `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Supabase's newer name for the anon key).
+- **Data layer:** TanStack Query on the client (`Providers`), `staleTime` 30s +
+  refetch-on-focus is the cross-device sync strategy (no realtime yet).
+- **DB:** every table has `user_id uuid default auth.uid()` and an owner-only RLS
+  policy. `0001_initial_schema.sql` (all tables) is applied. Add new tables/columns
+  as new numbered migrations with the same RLS pattern.
+- **Nav:** add a section by creating `src/app/(app)/<name>/page.tsx` and an entry
+  in `src/lib/nav.tsx` (`primary: true` puts it in the 5-slot mobile tab bar).
+- Typed routes are on (`typedRoutes: true`) — new routes must exist before you
+  link to them.

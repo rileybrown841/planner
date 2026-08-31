@@ -1,36 +1,155 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Planner
 
-## Getting Started
+A personal, single-user digital planner — classes and semesters, fast task
+capture, a unified calendar, exam/project countdowns, habit tracking and simple
+budgeting. Built as a Progressive Web App so it installs on an iPhone home screen
+and works as a normal responsive site on a laptop, with data synced through
+Supabase.
 
-First, run the development server:
+See [`projectplan.md`](projectplan.md) for the full product plan and phased build
+order.
+
+## Status — Phases 1–2 complete
+
+| Phase | Area | State |
+| --- | --- | --- |
+| 1 | Next.js 16 + Tailwind v4 + TS, PWA, nav shell | ✅ |
+| 1 | Single-user magic-link auth + route protection | ✅ |
+| 1 | DB schema + Row Level Security (`0001_initial_schema.sql`) | ✅ applied |
+| 2 | Semesters — create / edit / activate / archive / delete | ✅ |
+| 2 | Classes — CRUD with code, instructor, colour, location, meeting times | ✅ |
+| 2 | Archived semesters + their classes are read-only | ✅ |
+| 2 | Settings — account, display name | ✅ |
+
+Later phases (`/calendar`, `/tasks`, `/exams`, `/habits`, `/budget`) are routable
+and show a placeholder naming the phase they land in.
+
+## Tech stack
+
+- **Next.js 16** App Router. Note: this is a newer Next.js than most references —
+  middleware is now `src/proxy.ts`, route type helpers (`PageProps`, `LayoutProps`)
+  are generated. See `AGENTS.md`.
+- **Supabase** — Postgres + Auth. Row Level Security scoped to `auth.uid()` is the
+  data boundary.
+- **Tailwind CSS v4**, mobile-first.
+- **Server Components read; Server Actions mutate** (`revalidatePath` + `redirect`).
+  `zod` validates form input. TanStack Query is reserved for later live-logging screens.
+- **Vercel** for hosting.
+
+## Local setup
+
+### 1. Install
+
+```bash
+npm install
+```
+
+### 2. Create a Supabase project
+
+1. Create a project at [supabase.com](https://supabase.com/dashboard).
+2. **Project Settings → API**: copy the **Project URL** — just
+   `https://<project-ref>.supabase.co`, no `/rest/v1` and no trailing slash — and
+   the **publishable** API key (`sb_publishable_…`).
+3. **Authentication → Sign In / Providers → Email**: leave Email enabled.
+4. **Authentication → Sign In / Providers**: turn **off** "Allow new users to sign
+   up" — this is a one-person app.
+5. **Authentication → URL Configuration**:
+   - Site URL: `http://localhost:3000` for now (change to your domain later).
+   - Redirect URLs: add `http://localhost:3000/**` (and your production
+     `https://your-domain/**` when you deploy).
+6. **Authentication → Users → Add user**: create the single account using the
+   email you'll sign in with. (Set any password — you'll use magic links, but the
+   user has to exist.)
+
+### 3. Environment variables
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in `.env.local`:
+
+| Var | Value |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL from step 2 |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable key from step 2 |
+| `ALLOWED_EMAIL` | The email of the user you created in step 6 |
+| `NEXT_PUBLIC_SITE_URL` | Leave blank locally; set to your domain in production |
+
+### 4. Apply the database schema
+
+Not required to boot the app or sign in, but needed once you start Phase 2.
+
+- **Quick way:** open `supabase/migrations/0001_initial_schema.sql`, paste it into
+  the Supabase **SQL Editor**, run it.
+- **CLI way:** `npx supabase link --project-ref <ref>` then `npx supabase db push`.
+
+### 5. Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>, enter `ALLOWED_EMAIL`, click the link in the email.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploying to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Push this repo to GitHub.
+2. [vercel.com/new](https://vercel.com/new) → import the repo. Framework preset:
+   Next.js. No build settings to change.
+3. **Environment Variables** — add all four from `.env.local`. Set
+   `NEXT_PUBLIC_SITE_URL` to the real deployment URL
+   (e.g. `https://planner-xxxx.vercel.app` or your custom domain).
+4. Deploy. Then, back in Supabase → **Authentication → URL Configuration**, set
+   the Site URL to your production URL and add `https://<that-domain>/**` to the
+   redirect URLs.
+5. Every push to the default branch redeploys automatically.
 
-## Learn More
+## Project layout
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+  proxy.ts                  Auth session refresh + route guard (Next 16 "middleware")
+  app/
+    (app)/                  Signed-in shell — layout gates on requireUser()
+      today/                Greeting + active semester + build roadmap
+      classes/              Active semester's classes; new/[id]/[id]/edit
+      semesters/            All semesters; [id] detail; new/[id]/edit
+      settings/             Account + display name
+      calendar/ tasks/ exams/ habits/ budget/   later-phase placeholders
+    login/  auth/callback/  Magic-link sign-in + single-user check
+    offline/  manifest.ts   PWA offline page + manifest
+  components/
+    ui/                    button.tsx, form-field.tsx (shared primitives)
+    nav/                   Sidebar, bottom tab bar, mobile header
+    *-form.tsx *-card.tsx  Semester/class forms, cards, editors
+  lib/
+    supabase/              client.ts / server.ts / proxy.ts / env.ts
+    auth.ts                getUser / requireUser / isAllowedEmail
+    data/                  server-only read helpers + guards.ts (archived check)
+    actions/               Server Actions (semesters, classes, settings, auth)
+    schemas.ts form.ts     zod input schemas + ActionResult helpers
+    routes.ts nav.tsx      typed dynamic-route builders + nav config
+supabase/
+  migrations/0001_initial_schema.sql   (applied)
+public/
+  sw.js  icon-*.png        App-shell service worker + PWA icons
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How the single-user lock works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `signInWithOtp` is called with `shouldCreateUser: false`, and public signups are
+  disabled in Supabase — so a link can only ever be sent to the one existing user.
+- `ALLOWED_EMAIL` is checked again after the magic link is exchanged; any other
+  identity is signed straight back out.
+- Row Level Security (`auth.uid() = user_id`, `force row level security`) means
+  even a leaked key can't read or write another row.
 
-## Deploy on Vercel
+## Commands
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev      # dev server
+npm run build    # production build
+npm run start    # serve the production build
+npm run lint     # eslint
+```
