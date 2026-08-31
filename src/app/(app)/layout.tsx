@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { requireUser } from "@/lib/auth";
 import { displayName } from "@/lib/user";
+import { listClassPickerOptions } from "@/lib/data/classes";
+import { listExtracurriculars } from "@/lib/data/extracurriculars";
 import { Sidebar } from "@/components/nav/sidebar";
 import { BottomNav } from "@/components/nav/bottom-nav";
 import { MobileHeader } from "@/components/nav/mobile-header";
@@ -19,6 +21,13 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const email = user.email ?? "";
   const name = displayName(user);
 
+  // For the app-wide quick-add link picker. Both helpers are cache()d, so pages
+  // that also read them (e.g. /tasks) don't pay twice.
+  const [classGroups, activities] = await Promise.all([
+    listClassPickerOptions(),
+    listExtracurriculars(),
+  ]);
+
   return (
     <div className="flex min-h-dvh flex-col md:flex-row">
       <Sidebar name={name} email={email} />
@@ -31,7 +40,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         <BottomNav />
       </div>
 
-      <QuickAddFab />
+      <QuickAddFab classGroups={classGroups} activities={activities} />
     </div>
   );
 }

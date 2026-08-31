@@ -1,17 +1,28 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useState } from "react";
+import type { ClassPickerGroup } from "@/lib/data/classes";
+import type { Extracurricular } from "@/lib/types";
 import { IDLE_RESULT } from "@/lib/form";
 import { createTaskQuick } from "@/lib/actions/tasks";
 import { PRIORITIES, PRIORITY_LABEL } from "@/lib/priority";
 import { FormField, controlClass } from "@/components/ui/form-field";
 import { Button } from "@/components/ui/button";
+import { LinkPicker } from "@/components/link-picker";
 
 /**
  * Rendered fresh each time the dialog opens (the FAB unmounts it on close), so
  * there's no form state to reset — a successful add just closes the dialog.
  */
-export function QuickAddForm({ onDone }: { onDone: () => void }) {
+export function QuickAddForm({
+  classGroups,
+  activities,
+  onDone,
+}: {
+  classGroups: ClassPickerGroup[];
+  activities: Pick<Extracurricular, "id" | "name">[];
+  onDone: () => void;
+}) {
   const [state, action, pending] = useActionState(createTaskQuick, IDLE_RESULT);
   const [date, setDate] = useState("");
 
@@ -24,6 +35,8 @@ export function QuickAddForm({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     if (state.status === "success") onDone();
   }, [state, onDone]);
+
+  const hasLinkTargets = classGroups.length > 0 || activities.length > 0;
 
   return (
     <form action={action} className="flex flex-col gap-4">
@@ -60,6 +73,12 @@ export function QuickAddForm({ onDone }: { onDone: () => void }) {
           </select>
         </FormField>
       </div>
+
+      {hasLinkTargets && (
+        <FormField label="Link to a class or activity" htmlFor="quick-link" optional>
+          <LinkPicker id="quick-link" classGroups={classGroups} activities={activities} />
+        </FormField>
+      )}
 
       {state.status === "error" && state.message && (
         <p className="text-sm text-red-600 dark:text-red-400">{state.message}</p>

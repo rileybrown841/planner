@@ -82,6 +82,7 @@ export const quickTaskSchema = z.object({
     .union([z.iso.datetime({ offset: true }), z.literal("")])
     .transform((v) => v || null),
   priority: z.enum(PRIORITIES).default("medium"),
+  link: linkField,
 });
 
 export type SemesterValues = z.infer<typeof semesterSchema>;

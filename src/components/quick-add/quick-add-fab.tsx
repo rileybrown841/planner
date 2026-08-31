@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Plus, X } from "lucide-react";
+import type { ClassPickerGroup } from "@/lib/data/classes";
+import type { Extracurricular } from "@/lib/types";
 import { QuickAddForm } from "@/components/quick-add/quick-add-form";
 
 /**
@@ -9,7 +11,13 @@ import { QuickAddForm } from "@/components/quick-add/quick-add-form";
  * screen (clear of the mobile tab bar). Opens a modal <dialog> with a
  * title-first form.
  */
-export function QuickAddFab() {
+export function QuickAddFab({
+  classGroups,
+  activities,
+}: {
+  classGroups: ClassPickerGroup[];
+  activities: Pick<Extracurricular, "id" | "name">[];
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -53,7 +61,11 @@ export function QuickAddFab() {
                 <X className="size-5" />
               </button>
             </div>
-            <QuickAddForm onDone={() => setOpen(false)} />
+            <QuickAddForm
+              classGroups={classGroups}
+              activities={activities}
+              onDone={() => setOpen(false)}
+            />
           </div>
         )}
       </dialog>

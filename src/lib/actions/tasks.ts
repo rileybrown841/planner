@@ -34,6 +34,7 @@ export async function createTaskQuick(
     title: formData.get("title"),
     due_at: formData.get("due_at") ?? "",
     priority: formData.get("priority") ?? "medium",
+    link: formData.get("link") ?? undefined,
   });
   if (!parsed.success) return invalid(parsed.error);
 
@@ -42,6 +43,8 @@ export async function createTaskQuick(
     title: parsed.data.title,
     due_date: parsed.data.due_at,
     priority: parsed.data.priority,
+    class_id: parsed.data.link.class_id,
+    extracurricular_id: parsed.data.link.extracurricular_id,
   });
   if (error) return failed(error.message);
 
