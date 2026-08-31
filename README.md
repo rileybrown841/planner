@@ -94,16 +94,18 @@ Open <http://localhost:3000>, enter `ALLOWED_EMAIL`, click the link in the email
 
 ## Deploying to Vercel
 
-1. Push this repo to GitHub.
-2. [vercel.com/new](https://vercel.com/new) → import the repo. Framework preset:
-   Next.js. No build settings to change.
-3. **Environment Variables** — add all four from `.env.local`. Set
-   `NEXT_PUBLIC_SITE_URL` to the real deployment URL
-   (e.g. `https://planner-xxxx.vercel.app` or your custom domain).
-4. Deploy. Then, back in Supabase → **Authentication → URL Configuration**, set
-   the Site URL to your production URL and add `https://<that-domain>/**` to the
-   redirect URLs.
-5. Every push to the default branch redeploys automatically.
+Repo: <https://github.com/rileybrown841/planner> (branch `main`).
+
+1. In Vercel: either connect this repo to the existing project (Project →
+   Settings → Git → Connect) to keep its URL and env vars, or import fresh at
+   [vercel.com/new](https://vercel.com/new). Framework preset: Next.js, no build
+   settings to change.
+2. **Environment Variables** — set all four from `.env.example`.
+   `NEXT_PUBLIC_SITE_URL` must be the real deployment URL
+   (e.g. `https://rileysplanner.vercel.app`).
+3. In Supabase → **Authentication → URL Configuration**: Site URL = your
+   production URL, and add `https://<that-domain>/**` to the redirect URLs.
+4. Every push to `main` redeploys automatically.
 
 ## Project layout
 
