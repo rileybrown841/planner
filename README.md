@@ -9,7 +9,7 @@ Supabase.
 See [`projectplan.md`](projectplan.md) for the full product plan and phased build
 order.
 
-## Status — Phases 1–6 complete
+## Status — Phases 1–6 + 9 complete
 
 | Phase | Area | State |
 | --- | --- | --- |
@@ -19,8 +19,10 @@ order.
 | 4 | Calendar — month / week / day; events (linked/standalone, recurring); meeting frequency | ✅ |
 | 5 | Exam / project tracker — countdowns, done toggle, calendar markers (`0002`); task subtasks | ✅ |
 | 6 | Dashboard — `/today`: stat tiles, today's schedule + due tasks, 7-day "Coming up" | ✅ |
+| 9 | Polish — green-pastel light/dark theme, Caveat/Nunito type, ⌘K search, perceived-perf + a11y sweep | ✅ |
+| 7–8 | Habits, budgeting (`/habits`, `/budget` routable placeholders) | ⬜ deferred |
 
-Migrations `0001` (SQL editor) and `0002` (via MCP) applied. Later phases
+Migrations `0001` (SQL editor) and `0002` (via MCP) applied. Phases 7–8
 (`/habits`, `/budget`) are routable and show a placeholder.
 
 ## Tech stack
@@ -30,7 +32,10 @@ Migrations `0001` (SQL editor) and `0002` (via MCP) applied. Later phases
   are generated. See `AGENTS.md`.
 - **Supabase** — Postgres + Auth. Row Level Security scoped to `auth.uid()` is the
   data boundary.
-- **Tailwind CSS v4**, mobile-first.
+- **Tailwind CSS v4**, mobile-first. Green-pastel palette with class-based
+  light/dark (`next-themes`); Caveat for large headings, Nunito for body. The
+  palette is defined once in `src/app/globals.css` by remapping the `zinc` /
+  `indigo` scales, so components use ordinary utility classes.
 - **Server Components read; Server Actions mutate** (`revalidatePath` + `redirect`).
   `zod` validates form input. TanStack Query is reserved for later live-logging screens.
 - **Vercel** for hosting.
@@ -126,12 +131,15 @@ src/
     offline/  manifest.ts   PWA offline page + manifest
   components/
     ui/                    button.tsx, form-field.tsx (shared primitives)
-    nav/                   Sidebar, bottom tab bar, mobile header
+    nav/                   Sidebar, bottom tab bar, mobile header (+ ⌘K search button)
+    search/                ⌘K command palette (search-palette / search-button)
+    settings/              theme-toggle.tsx (Light / System / Dark)
+    dashboard/             stat tiles + "Coming up" list
     *-form.tsx *-card.tsx  Semester/class forms, cards, editors
   lib/
     supabase/              client.ts / server.ts / proxy.ts / env.ts
     auth.ts                getUser / requireUser / isAllowedEmail
-    data/                  server-only read helpers + guards.ts (archived check)
+    data/                  server-only read helpers + guards.ts (archived check) + search.ts
     actions/               Server Actions (semesters, classes, tasks, extracurriculars, settings, auth)
     schemas.ts form.ts     zod input schemas + ActionResult helpers
     dates.ts priority.ts   client-side task bucket / relative-due + priority helpers

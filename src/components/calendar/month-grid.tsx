@@ -54,11 +54,11 @@ export function MonthGrid({
                 onClick={() => onSelectDay(day)}
                 aria-label={`Open ${day.toLocaleDateString()}`}
                 className={cn(
-                  "self-end text-xs",
+                  "focus-ring grid size-6 shrink-0 place-items-center self-end rounded-full text-xs",
                   isToday
-                    ? "grid size-5 place-items-center rounded-full bg-indigo-600 text-white"
+                    ? "bg-indigo-600 text-white"
                     : inMonth
-                      ? "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+                      ? "text-zinc-500 hover:bg-black/5 hover:text-zinc-900 dark:hover:bg-white/10 dark:hover:text-zinc-100"
                       : "text-zinc-300 dark:text-zinc-600",
                 )}
               >
@@ -71,7 +71,7 @@ export function MonthGrid({
                 <button
                   type="button"
                   onClick={() => onSelectDay(day)}
-                  className="px-1 text-left text-[0.7rem] text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="focus-ring rounded px-1 text-left text-[0.7rem] text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
                 >
                   +{extra} more
                 </button>

@@ -56,14 +56,14 @@ export function CalendarHeader({
           type="button"
           aria-label="Previous"
           onClick={onPrev}
-          className="grid size-8 place-items-center rounded-lg text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5"
+          className="focus-ring grid size-10 place-items-center rounded-lg text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5"
         >
           <ChevronLeft className="size-4" />
         </button>
         <button
           type="button"
           onClick={onToday}
-          className="rounded-lg px-2 py-1 text-sm font-medium text-zinc-600 hover:bg-black/5 dark:text-zinc-300 dark:hover:bg-white/5"
+          className="focus-ring rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-black/5 dark:text-zinc-300 dark:hover:bg-white/5"
         >
           Today
         </button>
@@ -71,13 +71,13 @@ export function CalendarHeader({
           type="button"
           aria-label="Next"
           onClick={onNext}
-          className="grid size-8 place-items-center rounded-lg text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5"
+          className="focus-ring grid size-10 place-items-center rounded-lg text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5"
         >
           <ChevronRight className="size-4" />
         </button>
       </div>
 
-      <h1 className="text-lg font-semibold tracking-tight">{title(view, anchor)}</h1>
+      <h1 className="font-display text-2xl">{title(view, anchor)}</h1>
 
       <div className="ml-auto flex items-center gap-2">
         <div className="flex rounded-lg border border-black/15 p-0.5 text-sm dark:border-white/15">
@@ -87,7 +87,7 @@ export function CalendarHeader({
               type="button"
               onClick={() => onView(v)}
               className={cn(
-                "rounded-md px-2.5 py-1 capitalize",
+                "focus-ring rounded-md px-3 py-1.5 capitalize",
                 v === view
                   ? "bg-indigo-600 text-white"
                   : "text-zinc-600 hover:bg-black/5 dark:text-zinc-300 dark:hover:bg-white/5",

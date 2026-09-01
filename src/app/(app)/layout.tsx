@@ -1,32 +1,40 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { requireUser } from "@/lib/auth";
 import { displayName } from "@/lib/user";
 import { listClassPickerOptions } from "@/lib/data/classes";
 import { listExtracurriculars } from "@/lib/data/extracurriculars";
+import { getSearchIndex } from "@/lib/data/search";
 import { Sidebar } from "@/components/nav/sidebar";
 import { BottomNav } from "@/components/nav/bottom-nav";
 import { MobileHeader } from "@/components/nav/mobile-header";
 import { QuickAddFab } from "@/components/quick-add/quick-add-fab";
+import { SearchPalette } from "@/components/search/search-palette";
 
 // Every screen in here is per-user and auth-gated — never prerender it.
 export const dynamic = "force-dynamic";
 
 /**
- * Shell for every signed-in screen: persistent sidebar on desktop, header +
- * bottom tab bar on mobile. `requireUser()` is the real gate — the proxy only
- * does an optimistic redirect.
+ * Quick-add picker data + the search index. Behind <Suspense> so page content
+ * (`{children}` + its loading.tsx) streams without waiting on these queries.
  */
+async function ShellExtras() {
+  const [classGroups, activities, searchIndex] = await Promise.all([
+    listClassPickerOptions(),
+    listExtracurriculars(),
+    getSearchIndex(),
+  ]);
+  return (
+    <>
+      <QuickAddFab classGroups={classGroups} activities={activities} />
+      <SearchPalette index={searchIndex} />
+    </>
+  );
+}
+
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await requireUser();
   const email = user.email ?? "";
   const name = displayName(user);
-
-  // For the app-wide quick-add link picker. Both helpers are cache()d, so pages
-  // that also read them (e.g. /tasks) don't pay twice.
-  const [classGroups, activities] = await Promise.all([
-    listClassPickerOptions(),
-    listExtracurriculars(),
-  ]);
 
   return (
     <div className="flex min-h-dvh flex-col md:flex-row">
@@ -40,7 +48,9 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         <BottomNav />
       </div>
 
-      <QuickAddFab classGroups={classGroups} activities={activities} />
+      <Suspense fallback={null}>
+        <ShellExtras />
+      </Suspense>
     </div>
   );
 }

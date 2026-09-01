@@ -11,9 +11,48 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Planner — project notes
 
 Single-user personal planner PWA. Full plan and phased build order in
-`projectplan.md`. Phases 1–6 done; build subsequent phases in order.
+`projectplan.md`. Phases 1–6 + 9 done; phases 7 (habits) and 8 (budgeting) were
+deferred by the user — build them next, in order.
 Repo `github.com/rileybrown841/planner` (`main`). Migrations `0001`, `0002`
-applied (0002 via MCP `apply_migration`).
+applied (0002 via MCP `apply_migration`). Phase 9 added no schema.
+
+## Phase 9 (polish — theme, type, search, perf, a11y)
+
+- **Theme lives in `src/app/globals.css`.** Full pastel palette leaning
+  green/cool. `:root` + `.dark` hold raw role vars; a `@theme` block **remaps the
+  Tailwind scales the app already uses** so components need no per-element edits:
+  - `--color-indigo-*` → sage-green accent. `600/500/700` are pinned hex so
+    filled buttons keep white text in both themes; `300/400` back the
+    `dark:text-indigo-*` variants; `50/100` → `--accent-tint`.
+  - `--color-zinc-*` is **hybrid**: `500`/`400` are theme-aware
+    (`var(--muted)` / `var(--muted-2)`, the roles used bare with no `dark:`
+    sibling); `950–600` and `300–50` are static cool-grays (they always appear
+    with a matching `dark:` sibling). Do **not** point the static steps at
+    `--line`/`--fg-*` — that regresses `dark:text-zinc-100/200/300` to invisible.
+  - `--background`/`--foreground`/`--surface` are theme-aware; `bg-[var(--surface)]`
+    is the popover/dropdown background (plain `dark:bg-zinc-900` breaks post-remap).
+- **Dark mode:** `next-themes`, class strategy, in `<Providers>`. Toggle =
+  `<ThemeToggle>` on `/settings` (Light / System / Dark). `<html
+  suppressHydrationWarning>`. The React "script tag while rendering" console
+  warning in dev is next-themes' anti-flash script — harmless.
+- **Type:** `next/font/google` Nunito (`--font-nunito` → `--font-sans`) + Caveat
+  (`--font-caveat` → `--font-display`). `.font-display` utility = Caveat; used
+  only on big page `<h1>`s and the `/today` greeting. Everything else is Nunito.
+- **Fonts you may see as "unloaded" in `document.fonts`** (`__nextjs-Geist*`) are
+  the dev overlay's, not ours.
+- **Search:** `getSearchIndex()` (`src/lib/data/search.ts`, `cache()`d) → flat
+  `SearchEntry[]`. `<SearchPalette index>` (native `<dialog>`, ⌘K / `Ctrl K` or
+  the `planner:open-search` window event) does client substring filtering.
+  `<SearchButton variant="bar"|"icon">` triggers it (sidebar / mobile header).
+  Both mounted in `(app)/layout.tsx`'s `<ShellExtras>` (Suspense-wrapped with the
+  FAB data so `{children}` streams first).
+- **Perf:** `(app)/loading.tsx` skeleton; `<ShellExtras>` Suspense boundary so the
+  layout only awaits `requireUser()`; `next.config.ts`
+  `optimizePackageImports: ["lucide-react"]`.
+- **a11y sweep:** `.focus-ring` utility in `globals.css` (transparent outline →
+  `var(--accent)` on `:focus-visible`) on nav links, calendar chips/cells, the
+  FAB, search buttons, menu items. Calendar prev/next bumped to 40px. Reduced-
+  motion guard already in `globals.css`.
 
 ## Phase 6 (dashboard)
 

@@ -17,7 +17,7 @@ export function CalendarChip({ item }: { item: CalendarItem }) {
       href={item.href}
       title={item.title}
       className={cn(
-        "flex items-center gap-1 truncate rounded px-1 py-0.5 text-[0.7rem] leading-tight",
+        "focus-ring flex items-center gap-1 truncate rounded px-1 py-0.5 text-[0.7rem] leading-tight",
         isTask
           ? "border border-dashed border-black/25 text-zinc-600 dark:border-white/30 dark:text-zinc-300"
           : isAssessment

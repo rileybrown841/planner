@@ -34,7 +34,7 @@ export function QuickAddFab({
         type="button"
         aria-label="Quick add task"
         onClick={() => setOpen(true)}
-        className="fixed bottom-20 right-4 z-30 grid size-14 place-items-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 transition-transform hover:scale-105 active:scale-95 md:bottom-6 md:right-6"
+        className="focus-ring fixed bottom-20 right-4 z-30 grid size-14 place-items-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 transition-transform hover:scale-105 active:scale-95 md:bottom-6 md:right-6"
         style={{ marginBottom: "env(safe-area-inset-bottom)" }}
       >
         <Plus className="size-6" />
@@ -56,7 +56,7 @@ export function QuickAddFab({
                 type="button"
                 aria-label="Close"
                 onClick={() => setOpen(false)}
-                className="grid size-8 place-items-center rounded-lg text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5"
+                className="focus-ring grid size-9 place-items-center rounded-lg text-zinc-500 hover:bg-black/5 dark:hover:bg-white/5"
               >
                 <X className="size-5" />
               </button>

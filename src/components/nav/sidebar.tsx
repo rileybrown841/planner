@@ -7,6 +7,7 @@ import { NAV_ITEMS, SECONDARY_NAV_ITEMS, isNavItemActive, type NavItem } from "@
 import { APP_NAME } from "@/lib/config";
 import { signOut } from "@/lib/actions/auth";
 import { cn } from "@/lib/cn";
+import { SearchButton } from "@/components/search/search-button";
 
 export function Sidebar({ name, email }: { name: string; email: string }) {
   const pathname = usePathname();
@@ -20,7 +21,7 @@ export function Sidebar({ name, email }: { name: string; email: string }) {
         href={item.href}
         aria-current={active ? "page" : undefined}
         className={cn(
-          "flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors",
+          "focus-ring flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors",
           active
             ? "bg-indigo-600/10 text-indigo-700 dark:text-indigo-300"
             : "text-zinc-600 hover:bg-black/5 dark:text-zinc-300 dark:hover:bg-white/5",
@@ -36,7 +37,7 @@ export function Sidebar({ name, email }: { name: string; email: string }) {
     <aside className="hidden w-60 shrink-0 flex-col border-r border-black/10 bg-white/60 px-3 py-4 md:flex dark:border-white/10 dark:bg-white/[0.02]">
       <Link
         href="/today"
-        className="mb-4 flex items-center gap-2 px-2 text-lg font-semibold tracking-tight"
+        className="focus-ring mb-4 flex items-center gap-2 rounded-lg px-2 text-lg font-semibold tracking-tight"
       >
         <span
           aria-hidden
@@ -46,6 +47,10 @@ export function Sidebar({ name, email }: { name: string; email: string }) {
         </span>
         {APP_NAME}
       </Link>
+
+      <div className="mb-3 px-0.5">
+        <SearchButton />
+      </div>
 
       <nav className="flex flex-1 flex-col gap-1">
         {NAV_ITEMS.map(renderItem)}
@@ -61,7 +66,7 @@ export function Sidebar({ name, email }: { name: string; email: string }) {
         <form action={signOut}>
           <button
             type="submit"
-            className="mt-1 flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-black/5 dark:text-zinc-300 dark:hover:bg-white/5"
+            className="focus-ring mt-1 flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-black/5 dark:text-zinc-300 dark:hover:bg-white/5"
           >
             <LogOut className="size-5" />
             Sign out
