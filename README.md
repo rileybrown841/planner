@@ -9,7 +9,7 @@ Supabase.
 See [`projectplan.md`](projectplan.md) for the full product plan and phased build
 order.
 
-## Status — Phases 1–5 complete
+## Status — Phases 1–6 complete
 
 | Phase | Area | State |
 | --- | --- | --- |
@@ -17,8 +17,8 @@ order.
 | 2 | Semesters + classes CRUD; archived = read-only; settings | ✅ |
 | 3 | Tasks — quick-add, triage board, filters; extracurriculars CRUD | ✅ |
 | 4 | Calendar — month / week / day; events (linked/standalone, recurring); meeting frequency | ✅ |
-| 5 | Exam / project tracker — countdowns, done toggle, calendar markers (`0002`) | ✅ |
-| 5 | Task subtasks — any task or exam breaks into an optional checklist of steps | ✅ |
+| 5 | Exam / project tracker — countdowns, done toggle, calendar markers (`0002`); task subtasks | ✅ |
+| 6 | Dashboard — `/today`: stat tiles, today's schedule + due tasks, 7-day "Coming up" | ✅ |
 
 Migrations `0001` (SQL editor) and `0002` (via MCP) applied. Later phases
 (`/habits`, `/budget`) are routable and show a placeholder.

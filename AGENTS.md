@@ -11,9 +11,19 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Planner — project notes
 
 Single-user personal planner PWA. Full plan and phased build order in
-`projectplan.md`. Phases 1–5 done; build subsequent phases in order.
+`projectplan.md`. Phases 1–6 done; build subsequent phases in order.
 Repo `github.com/rileybrown841/planner` (`main`). Migrations `0001`, `0002`
 applied (0002 via MCP `apply_migration`).
+
+## Phase 6 (dashboard)
+
+`/today` is the dashboard (PWA start_url). Page fetches `getDashboardData()`
+(`src/lib/data/dashboard.ts` = `getCalendarSources()` + `countOpenTasks()`) and
+hands it to `<Dashboard>` (client) which computes everything in the viewer's
+timezone: 3 stat tiles (`<StatTile>`), a Today panel (reuses `<TodaySchedule>` +
+`<DueSoon>`), and `<ComingUp>` (next-7-days all-day items via
+`buildCalendarItems`, grouped by day). When Phase 7 lands, add a habits section
+to `<Dashboard>`.
 
 ## Phase 5 additions (exam/project tracker, task subtasks)
 

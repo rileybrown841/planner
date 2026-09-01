@@ -77,6 +77,19 @@ export const listSteps = cache(
   },
 );
 
+/** Total tasks still to do (any due date, top-level or step). */
+export const countOpenTasks = cache(async (): Promise<number> => {
+  await requireUser();
+  const supabase = await createClient();
+  const { count, error } = await supabase
+    .from("tasks")
+    .select("id", { count: "exact", head: true })
+    .neq("status", "done");
+
+  if (error) throw error;
+  return count ?? 0;
+});
+
 /** Open (not done) tasks that have a due date — the dashboard buckets these client-side. */
 export const listOpenDatedTasks = cache(async (): Promise<TaskWithLinks[]> => {
   await requireUser();
