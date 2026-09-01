@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, User } from "lucide-react";
 import { getClassWithSemester } from "@/lib/data/classes";
+import { listTasks } from "@/lib/data/tasks";
 import { classesHref, editClassHref } from "@/lib/routes";
 import { deleteClass } from "@/lib/actions/classes";
 import { colorDotStyle } from "@/lib/colors";
@@ -10,6 +11,7 @@ import { DAY_LABELS, formatTime, sortMeetings } from "@/lib/days";
 import { buttonClass } from "@/components/ui/button";
 import { ConfirmSubmit } from "@/components/confirm-submit";
 import { ReadOnlyBanner } from "@/components/read-only-banner";
+import { TaskChecklist } from "@/components/task/task-checklist";
 
 export const metadata: Metadata = { title: "Class" };
 
@@ -23,6 +25,7 @@ export default async function ClassDetailPage({
   const readOnly = cls.semester.is_archived;
   const meetings = sortMeetings(cls.schedule ?? []);
   const backHref = classesHref(cls.semester.id, cls.semester.is_active);
+  const tasks = await listTasks({ classId: cls.id, includeDone: true });
 
   return (
     <section className="flex flex-col gap-6">
@@ -105,6 +108,19 @@ export default async function ClassDetailPage({
             ))}
           </ul>
         )}
+      </div>
+
+      <div>
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+          Linked tasks
+        </h2>
+        <div className="mt-2">
+          <TaskChecklist
+            tasks={tasks}
+            readOnly={readOnly}
+            emptyText="No tasks linked to this class yet."
+          />
+        </div>
       </div>
     </section>
   );

@@ -7,14 +7,17 @@ import { TaskRow } from "@/components/task/task-row";
 
 /**
  * Flat, checkable task list (no date buckets). Used on the dashboard and the
- * activity detail page. `/tasks` uses <TaskBoard> instead.
+ * class / activity detail pages. `/tasks` uses <TaskBoard> instead.
+ * `readOnly` renders static rows (archived-semester classes).
  */
 export function TaskChecklist({
   tasks,
   emptyText = "Nothing here.",
+  readOnly = false,
 }: {
   tasks: TaskWithLinks[];
   emptyText?: string;
+  readOnly?: boolean;
 }) {
   const [, startTransition] = useTransition();
   const [optimistic, applyChange] = useOptimistic(
@@ -41,7 +44,7 @@ export function TaskChecklist({
   return (
     <ul>
       {optimistic.map((task) => (
-        <TaskRow key={task.id} task={task} onToggle={onToggle} />
+        <TaskRow key={task.id} task={task} onToggle={readOnly ? undefined : onToggle} />
       ))}
     </ul>
   );
