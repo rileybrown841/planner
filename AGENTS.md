@@ -11,8 +11,26 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Planner — project notes
 
 Single-user personal planner PWA. Full plan and phased build order in
-`projectplan.md`. Phases 1–4 done; build subsequent phases in order.
-Repo `github.com/rileybrown841/planner` (`main`).
+`projectplan.md`. Phases 1–5 done; build subsequent phases in order.
+Repo `github.com/rileybrown841/planner` (`main`). Migrations `0001`, `0002`
+applied (0002 via MCP `apply_migration`).
+
+## Phase 5 additions (exam/project tracker, task subtasks)
+
+- **Assessments** (`assessments` table) = exams & projects: CRUD at `/exams`,
+  countdown via `formatRelativeDue`/`DueBadge`, `completed_at` toggle (0002),
+  done ones collapse. `class_id` optional. Show on the calendar as all-day
+  `kind: "assessment"` items.
+- **Two subtask relationships**, both plain `tasks` rows:
+  - `tasks.assessment_id` → step of an exam/project (created on the exam page).
+  - `tasks.parent_task_id` (0002) → step of another task (created on that task's
+    page). Deleting a parent cascades to its steps.
+  - Steps inherit the parent's class / activity; they flow through `/tasks`,
+    `/today`, the calendar with no extra plumbing. `<StepList>` + `<StepAdder>`
+    (action `addStep`, `parent` = `"task:<id>"|"assessment:<id>"`).
+- Board step progress ("2/4 steps") is computed client-side in `TaskBoard` from
+  the full task list; `assessmentStepCounts()` does the same for `/exams` cards.
+- `getTask` fetches the parent row in a second query (self-FK embed avoided).
 
 ## Phase 4 additions (calendar, events, meeting recurrence)
 

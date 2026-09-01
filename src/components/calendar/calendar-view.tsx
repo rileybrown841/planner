@@ -19,6 +19,7 @@ import { TimeGrid } from "@/components/calendar/time-grid";
 const LEGEND = [
   { label: "Class / activity", color: null },
   { label: "Event", color: STANDALONE_EVENT_COLOR },
+  { label: "Exam / project", color: STANDALONE_EVENT_COLOR },
   { label: "Task due", color: TASK_COLOR },
 ];
 

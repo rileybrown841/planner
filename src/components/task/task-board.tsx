@@ -33,6 +33,16 @@ export function TaskBoard({ tasks }: { tasks: TaskWithLinks[] }) {
     .filter((t) => t.status === "done")
     .sort((a, b) => (b.completed_at ?? "").localeCompare(a.completed_at ?? ""));
 
+  // Step progress per parent task, from the full list.
+  const stepsByParent = new Map<string, { total: number; done: number }>();
+  for (const t of optimisticTasks) {
+    if (!t.parent_task_id) continue;
+    const c = stepsByParent.get(t.parent_task_id) ?? { total: 0, done: 0 };
+    c.total += 1;
+    if (t.status === "done") c.done += 1;
+    stepsByParent.set(t.parent_task_id, c);
+  }
+
   const buckets = new Map<DueBucket, TaskWithLinks[]>();
   for (const task of active) {
     const key = bucketFor(task.due_date);
@@ -71,7 +81,12 @@ export function TaskBoard({ tasks }: { tasks: TaskWithLinks[] }) {
             </h2>
             <ul>
               {list.map((task) => (
-                <TaskRow key={task.id} task={task} onToggle={onToggle} />
+                <TaskRow
+                  key={task.id}
+                  task={task}
+                  onToggle={onToggle}
+                  steps={stepsByParent.get(task.id)}
+                />
               ))}
             </ul>
           </section>

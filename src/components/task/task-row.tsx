@@ -12,10 +12,13 @@ import { PriorityBadge } from "@/components/task/priority-badge";
 export function TaskRow({
   task,
   onToggle,
+  steps,
 }: {
   task: TaskWithLinks;
   /** Omit to render a read-only row (static checkbox indicator). */
   onToggle?: (task: TaskWithLinks) => void;
+  /** Progress of this task's own child steps, if any. */
+  steps?: { total: number; done: number };
 }) {
   const done = task.status === "done";
   const link = task.class ?? task.extracurricular;
@@ -59,6 +62,16 @@ export function TaskRow({
         <span className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
           {!done && <DueBadge due={task.due_date} />}
           <PriorityBadge priority={task.priority} />
+          {steps && steps.total > 0 && (
+            <span className="text-xs tabular-nums text-zinc-400">
+              {steps.done}/{steps.total} steps
+            </span>
+          )}
+          {task.assessment && (
+            <span className="text-xs text-zinc-500">
+              {task.assessment.kind === "exam" ? "Exam" : "Project"}: {task.assessment.title}
+            </span>
+          )}
           {link && (
             <span className="inline-flex items-center gap-1 text-xs text-zinc-500">
               <span

@@ -4,6 +4,7 @@
  */
 import type { Route } from "next";
 import type {
+  AssessmentWithClass,
   CalendarItem,
   CalendarItemKind,
   Class,
@@ -14,7 +15,7 @@ import type {
   TaskWithLinks,
 } from "@/lib/types";
 import { eventStartDates, meetingDates } from "@/lib/recurrence";
-import { activityHref, classHref, eventHref, taskHref } from "@/lib/routes";
+import { activityHref, assessmentHref, classHref, eventHref, taskHref } from "@/lib/routes";
 
 /** Standalone (unlinked) events + task due dates get these fallback colours. */
 export const STANDALONE_EVENT_COLOR = "#8b5cf6"; // violet
@@ -26,6 +27,7 @@ export type CalendarSourceData = {
   activities: Extracurricular[];
   events: EventWithLinks[];
   tasks: TaskWithLinks[];
+  assessments: AssessmentWithClass[];
 };
 
 function meetingItem(
@@ -134,6 +136,24 @@ export function buildCalendarItems(
       color: t.class?.color ?? t.extracurricular?.color ?? TASK_COLOR,
       location: null,
       href: taskHref(t.id),
+    });
+  }
+
+  for (const a of sources.assessments) {
+    if (!a.due_date) continue;
+    const due = new Date(a.due_date);
+    if (Number.isNaN(due.getTime()) || due < rangeStart || due >= rangeEnd) continue;
+    items.push({
+      key: `assessment:${a.id}`,
+      kind: "assessment",
+      sourceId: a.id,
+      title: `${a.kind === "exam" ? "Exam" : "Project"} · ${a.title}`,
+      start: due,
+      end: null,
+      allDay: true,
+      color: a.class?.color ?? STANDALONE_EVENT_COLOR,
+      location: null,
+      href: assessmentHref(a.id),
     });
   }
 

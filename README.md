@@ -9,22 +9,19 @@ Supabase.
 See [`projectplan.md`](projectplan.md) for the full product plan and phased build
 order.
 
-## Status — Phases 1–4 complete
+## Status — Phases 1–5 complete
 
 | Phase | Area | State |
 | --- | --- | --- |
-| 1 | Next.js 16 + Tailwind v4 + TS, PWA, nav shell | ✅ |
-| 1 | Single-user magic-link auth + route protection | ✅ |
-| 1 | DB schema + Row Level Security (`0001_initial_schema.sql`) | ✅ applied |
+| 1 | Next.js 16 + Tailwind v4 + TS, PWA, nav shell; magic-link auth; RLS schema (`0001`) | ✅ |
 | 2 | Semesters + classes CRUD; archived = read-only; settings | ✅ |
-| 3 | Tasks — app-wide quick-add, full CRUD, date-bucket triage, filters | ✅ |
-| 3 | Extracurriculars — CRUD; tasks link to a class or activity | ✅ |
-| 4 | Calendar — month / week / day views merging classes, activities, events, task due dates | ✅ |
-| 4 | Events — linked or standalone, one-off or weekly/biweekly/monthly | ✅ |
-| 4 | Extracurricular meetings can be weekly / every-2-weeks / monthly | ✅ |
+| 3 | Tasks — quick-add, triage board, filters; extracurriculars CRUD | ✅ |
+| 4 | Calendar — month / week / day; events (linked/standalone, recurring); meeting frequency | ✅ |
+| 5 | Exam / project tracker — countdowns, done toggle, calendar markers (`0002`) | ✅ |
+| 5 | Task subtasks — any task or exam breaks into an optional checklist of steps | ✅ |
 
-Later phases (`/exams`, `/habits`, `/budget`) are routable and show a placeholder
-naming the phase they land in.
+Migrations `0001` (SQL editor) and `0002` (via MCP) applied. Later phases
+(`/habits`, `/budget`) are routable and show a placeholder.
 
 ## Tech stack
 
@@ -116,14 +113,15 @@ src/
   proxy.ts                  Auth session refresh + route guard (Next 16 "middleware")
   app/
     (app)/                  Signed-in shell — layout gates on requireUser() + <QuickAddFab>
-      today/                Greeting + today's schedule + overdue/today tasks
+      today/                Greeting + schedule + due tasks + upcoming exams
       calendar/             Month / week / day views (client-expanded recurrence)
       events/               Event CRUD; new/[id]/[id]/edit
-      tasks/                Bucketed triage board; new/[id]/[id]/edit
+      tasks/                Bucketed triage board; [id] has a Steps checklist
+      exams/                Exam / project tracker; [id] has a Steps checklist
       extracurriculars/     Clubs/jobs/sports CRUD; [id]/[id]/edit
       classes/ semesters/   Phase 2 — class & semester CRUD
       settings/             Account + display name
-      exams/ habits/ budget/   later-phase placeholders
+      habits/ budget/       later-phase placeholders
     login/  auth/callback/  Magic-link sign-in + single-user check
     offline/  manifest.ts   PWA offline page + manifest
   components/

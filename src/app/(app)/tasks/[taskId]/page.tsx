@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { getTask } from "@/lib/data/tasks";
+import { getTask, listSteps } from "@/lib/data/tasks";
 import { deleteTask } from "@/lib/actions/tasks";
-import { editTaskHref } from "@/lib/routes";
+import { assessmentHref, editTaskHref, taskHref } from "@/lib/routes";
 import { colorDotStyle } from "@/lib/colors";
 import { PRIORITY_LABEL } from "@/lib/priority";
 import { formatDueFull } from "@/lib/dates";
@@ -12,6 +12,7 @@ import { buttonClass } from "@/components/ui/button";
 import { ConfirmSubmit } from "@/components/confirm-submit";
 import { StatusSelect } from "@/components/task/status-select";
 import { DueBadge } from "@/components/task/due-badge";
+import { StepList } from "@/components/task/step-list";
 
 export const metadata: Metadata = { title: "Task" };
 
@@ -20,17 +21,18 @@ export default async function TaskDetailPage({ params }: PageProps<"/tasks/[task
   const task = await getTask(taskId);
   if (!task) notFound();
 
+  const steps = await listSteps({ parentId: task.id });
   const link = task.class ?? task.extracurricular;
   const dueFull = formatDueFull(task.due_date);
 
   return (
     <section className="flex max-w-xl flex-col gap-6">
       <Link
-        href="/tasks"
+        href={task.parent ? taskHref(task.parent.id) : task.assessment ? assessmentHref(task.assessment.id) : "/tasks"}
         className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
       >
         <ArrowLeft className="size-4" />
-        All tasks
+        {task.parent ? task.parent.title : task.assessment ? task.assessment.title : "All tasks"}
       </Link>
 
       <header className="flex flex-wrap items-start gap-3">
@@ -89,6 +91,13 @@ export default async function TaskDetailPage({ params }: PageProps<"/tasks/[task
           </div>
         )}
       </dl>
+
+      <div>
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Steps</h2>
+        <div className="mt-2">
+          <StepList steps={steps} parent={`task:${task.id}`} />
+        </div>
+      </div>
     </section>
   );
 }

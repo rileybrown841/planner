@@ -94,6 +94,27 @@ const isoDatetimeOrEmpty = z
   .union([z.iso.datetime({ offset: true }), z.literal("")])
   .transform((v) => v || null);
 
+const uuidOrEmpty = z
+  .union([z.uuid(), z.literal("")])
+  .optional()
+  .transform((v) => v || null);
+
+export const assessmentSchema = z.object({
+  title: z.string().trim().min(1, "Give it a title.").max(200),
+  kind: z.enum(["exam", "project"]),
+  class_id: uuidOrEmpty,
+  due_at: isoDatetimeOrEmpty,
+  notes: optionalText(2000),
+});
+
+/** One-field checklist adder (task step or exam step). */
+export const stepSchema = z.object({
+  title: z.string().trim().min(1, "A step needs a title.").max(200),
+  due_at: isoDatetimeOrEmpty,
+});
+
+export type AssessmentValues = z.infer<typeof assessmentSchema>;
+
 export const eventSchema = z
   .object({
     title: z.string().trim().min(1, "An event needs a title.").max(200),

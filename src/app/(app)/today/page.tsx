@@ -8,6 +8,7 @@ import { getCalendarSources } from "@/lib/data/calendar";
 import { buttonClass } from "@/components/ui/button";
 import { DueSoon } from "@/components/task/due-soon";
 import { TodaySchedule } from "@/components/calendar/today-schedule";
+import { UpcomingAssessments } from "@/components/assessment/upcoming-assessments";
 
 export const metadata: Metadata = { title: "Today" };
 
@@ -16,7 +17,7 @@ const ROADMAP = [
   { phase: "Phase 2", label: "Semesters & classes", done: true },
   { phase: "Phase 3", label: "Tasks & extracurriculars", done: true },
   { phase: "Phase 4", label: "Unified calendar", done: true },
-  { phase: "Phase 5", label: "Exam & project tracker" },
+  { phase: "Phase 5", label: "Exam & project tracker", done: true },
   { phase: "Phase 6", label: "Day-at-a-glance dashboard" },
   { phase: "Phase 7", label: "Habit tracking" },
   { phase: "Phase 8", label: "Budgeting" },
@@ -73,6 +74,20 @@ export default async function TodayPage() {
         </div>
         <div className="mt-2">
           <DueSoon tasks={datedTasks} />
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-black/10 bg-white/50 p-5 dark:border-white/10 dark:bg-white/[0.02]">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+            Upcoming exams &amp; projects
+          </h2>
+          <Link href="/exams" className="text-xs text-indigo-600 hover:underline dark:text-indigo-400">
+            All →
+          </Link>
+        </div>
+        <div className="mt-2">
+          <UpcomingAssessments assessments={calendarSources.assessments} />
         </div>
       </div>
 

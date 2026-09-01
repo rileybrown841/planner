@@ -82,6 +82,22 @@ export interface Task {
   class_id: string | null;
   extracurricular_id: string | null;
   assessment_id: string | null;
+  parent_task_id: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type AssessmentKind = "exam" | "project";
+
+export interface Assessment {
+  id: string;
+  user_id: string;
+  class_id: string | null;
+  title: string;
+  kind: AssessmentKind;
+  due_date: string | null;
+  notes: string | null;
   completed_at: string | null;
   created_at: string;
   updated_at: string;
@@ -90,10 +106,17 @@ export interface Task {
 /** Minimal shapes joined onto a task for display (colour chip + label). */
 export type TaskClassLink = { id: string; name: string; color: string | null };
 export type TaskActivityLink = TaskClassLink & { type: ActivityType };
+export type TaskAssessmentLink = { id: string; title: string; kind: AssessmentKind };
+export type TaskParentLink = { id: string; title: string };
 
 export interface TaskWithLinks extends Task {
   class: TaskClassLink | null;
   extracurricular: TaskActivityLink | null;
+  assessment: TaskAssessmentLink | null;
+}
+
+export interface AssessmentWithClass extends Assessment {
+  class: TaskClassLink | null;
 }
 
 export interface EventRow {
@@ -121,7 +144,7 @@ export interface EventWithLinks extends EventRow {
 // ---------------------------------------------------------------------------
 // Calendar
 // ---------------------------------------------------------------------------
-export type CalendarItemKind = "class" | "activity" | "event" | "task";
+export type CalendarItemKind = "class" | "activity" | "event" | "task" | "assessment";
 
 export interface CalendarItem {
   /** Stable per occurrence: `${kind}:${sourceId}:${startISO}`. */
