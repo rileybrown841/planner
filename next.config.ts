@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   // Type-check every <Link href> and router push against the real route tree.
   typedRoutes: true,
 
+  // Tree-shake icon imports (avoids pulling the whole lucide-react barrel).
+  experimental: { optimizePackageImports: ["lucide-react"] },
+
   async headers() {
     return [
       {
