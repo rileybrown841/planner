@@ -22,7 +22,7 @@ export default async function ClassesPage({ searchParams }: PageProps<"/classes"
     <section className="flex flex-col gap-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl font-semibold tracking-tight">Classes</h1>
+          <h1 className="font-display text-2xl">Classes</h1>
           {active && selectable.length > 1 && (
             <SemesterSwitcher semesters={selectable} activeId={active.id} />
           )}

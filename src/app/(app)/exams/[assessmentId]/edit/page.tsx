@@ -20,7 +20,7 @@ export default async function EditAssessmentPage({
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">Edit {assessment.title}</h1>
+      <h1 className="font-display text-2xl">Edit {assessment.title}</h1>
       <AssessmentForm
         action={updateAssessment.bind(null, assessment.id)}
         classGroups={classGroups}

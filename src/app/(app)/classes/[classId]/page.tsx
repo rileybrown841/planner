@@ -44,7 +44,7 @@ export default async function ClassDetailPage({
           style={colorDotStyle(cls.color)}
         />
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold tracking-tight">{cls.name}</h1>
+          <h1 className="font-display text-2xl">{cls.name}</h1>
           <p className="text-sm text-zinc-500">
             {[cls.code, cls.semester.name].filter(Boolean).join(" · ")}
           </p>

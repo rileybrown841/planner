@@ -18,8 +18,8 @@ import { eventStartDates, meetingDates } from "@/lib/recurrence";
 import { activityHref, assessmentHref, classHref, eventHref, taskHref } from "@/lib/routes";
 
 /** Standalone (unlinked) events + task due dates get these fallback colours. */
-export const STANDALONE_EVENT_COLOR = "#8b5cf6"; // violet
-export const TASK_COLOR = "#94a3b8"; // slate-400
+export const STANDALONE_EVENT_COLOR = "#bd9ad6"; // lilac
+export const TASK_COLOR = "#93a3ac"; // slate
 
 export type CalendarSourceData = {
   activeSemester: Pick<Semester, "start_date" | "end_date"> | null;

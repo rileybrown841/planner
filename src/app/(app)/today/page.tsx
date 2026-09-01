@@ -21,7 +21,7 @@ export default async function TodayPage() {
   return (
     <section className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h1 className="font-display text-3xl">
           {greeting}, {displayName(user)}.
         </h1>
         <p className="text-sm text-zinc-500">

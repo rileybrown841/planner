@@ -20,7 +20,7 @@ export default async function EditTaskPage({ params }: PageProps<"/tasks/[taskId
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">Edit task</h1>
+      <h1 className="font-display text-2xl">Edit task</h1>
       <TaskForm
         action={updateTask.bind(null, task.id)}
         classGroups={classGroups}

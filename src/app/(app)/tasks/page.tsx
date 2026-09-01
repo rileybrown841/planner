@@ -31,7 +31,7 @@ export default async function TasksPage({ searchParams }: PageProps<"/tasks">) {
   return (
     <section className="flex flex-col gap-5">
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold tracking-tight">Tasks</h1>
+        <h1 className="font-display text-2xl">Tasks</h1>
         <Link href="/tasks/new" className={buttonClass({ size: "sm" })}>
           <Plus className="size-4" />
           New task

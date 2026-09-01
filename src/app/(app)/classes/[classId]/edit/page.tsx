@@ -18,7 +18,7 @@ export default async function EditClassPage({
   return (
     <section className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight">Edit {cls.name}</h1>
+        <h1 className="font-display text-2xl">Edit {cls.name}</h1>
         <p className="text-sm text-zinc-500">{cls.semester.name}</p>
       </div>
       <ClassForm

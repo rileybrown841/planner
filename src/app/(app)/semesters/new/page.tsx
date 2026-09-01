@@ -10,7 +10,7 @@ export default async function NewSemesterPage() {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">New semester</h1>
+      <h1 className="font-display text-2xl">New semester</h1>
       <SemesterForm action={createSemester} submitLabel="Create semester" cancelHref="/semesters" />
     </section>
   );

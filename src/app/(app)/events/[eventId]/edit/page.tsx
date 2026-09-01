@@ -20,7 +20,7 @@ export default async function EditEventPage({ params }: PageProps<"/events/[even
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">Edit {event.title}</h1>
+      <h1 className="font-display text-2xl">Edit {event.title}</h1>
       {event.recurrence_rule && (
         <p className="text-sm text-zinc-500">
           This is a repeating event — changes apply to the whole series.

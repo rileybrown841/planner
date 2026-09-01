@@ -31,7 +31,7 @@ export default async function SemesterDetailPage({
       </Link>
 
       <header className="flex flex-wrap items-center gap-3">
-        <h1 className="text-xl font-semibold tracking-tight">{semester.name}</h1>
+        <h1 className="font-display text-2xl">{semester.name}</h1>
         {semester.is_active && (
           <span className="rounded-full bg-indigo-600/10 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-300">
             Active

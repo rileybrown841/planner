@@ -18,7 +18,7 @@ export default async function EditSemesterPage({
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">Edit {semester.name}</h1>
+      <h1 className="font-display text-2xl">Edit {semester.name}</h1>
       <SemesterForm
         action={updateSemester.bind(null, semester.id)}
         defaultValue={semester}

@@ -12,7 +12,7 @@ export default async function NewAssessmentPage() {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">New exam or project</h1>
+      <h1 className="font-display text-2xl">New exam or project</h1>
       <AssessmentForm
         action={createAssessment}
         classGroups={classGroups}

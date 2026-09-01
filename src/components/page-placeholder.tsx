@@ -22,7 +22,7 @@ export function PagePlaceholder({
           <Icon className="size-5" />
         </span>
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+          <h1 className="font-display text-2xl">{title}</h1>
           <p className="text-xs font-medium uppercase tracking-wide text-zinc-400">
             {phase}
           </p>

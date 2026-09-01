@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { signOut } from "@/lib/actions/auth";
 import { Button, buttonClass } from "@/components/ui/button";
 import { DisplayNameForm } from "@/components/display-name-form";
+import { ThemeToggle } from "@/components/settings/theme-toggle";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -16,7 +17,7 @@ export default async function SettingsPage() {
 
   return (
     <section className="flex max-w-xl flex-col gap-8">
-      <h1 className="text-xl font-semibold tracking-tight">Settings</h1>
+      <h1 className="font-display text-2xl">Settings</h1>
 
       <div className="flex flex-col gap-3">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Account</h2>
@@ -24,6 +25,11 @@ export default async function SettingsPage() {
           Signed in as <span className="font-medium">{user.email}</span>
         </p>
         <DisplayNameForm defaultValue={storedName} />
+      </div>
+
+      <div className="flex flex-col gap-3 border-t border-black/10 pt-6 dark:border-white/10">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Appearance</h2>
+        <ThemeToggle />
       </div>
 
       <div className="flex flex-col gap-3 border-t border-black/10 pt-6 dark:border-white/10">

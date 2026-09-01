@@ -41,7 +41,7 @@ export default async function AssessmentDetailPage({
           <GraduationCap className="size-5" />
         </span>
         <div className="min-w-0 flex-1">
-          <h1 className={done ? "text-xl font-semibold tracking-tight text-zinc-400 line-through" : "text-xl font-semibold tracking-tight"}>
+          <h1 className={done ? "font-display text-2xl text-zinc-400 line-through" : "font-display text-2xl"}>
             {assessment.title}
           </h1>
           <p className="text-sm capitalize text-zinc-500">

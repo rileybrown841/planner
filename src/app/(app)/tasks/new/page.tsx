@@ -16,7 +16,7 @@ export default async function NewTaskPage() {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">New task</h1>
+      <h1 className="font-display text-2xl">New task</h1>
       <TaskForm
         action={createTask}
         classGroups={classGroups}

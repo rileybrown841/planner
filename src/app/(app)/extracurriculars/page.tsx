@@ -21,7 +21,7 @@ export default async function ExtracurricularsPage({
     <section className="flex flex-col gap-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Extracurriculars</h1>
+          <h1 className="font-display text-2xl">Extracurriculars</h1>
           <p className="text-sm text-zinc-500">
             Clubs, jobs, sports — not tied to a semester.
           </p>

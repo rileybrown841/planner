@@ -36,7 +36,7 @@ export default async function TaskDetailPage({ params }: PageProps<"/tasks/[task
       </Link>
 
       <header className="flex flex-wrap items-start gap-3">
-        <h1 className="min-w-0 flex-1 text-xl font-semibold tracking-tight">{task.title}</h1>
+        <h1 className="min-w-0 flex-1 font-display text-2xl">{task.title}</h1>
         <div className="flex gap-2">
           <Link
             href={editTaskHref(task.id)}

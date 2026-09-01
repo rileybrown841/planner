@@ -21,7 +21,7 @@ export default async function NewClassPage({ searchParams }: PageProps<"/classes
   return (
     <section className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight">New class</h1>
+        <h1 className="font-display text-2xl">New class</h1>
         <p className="text-sm text-zinc-500">Adding to {semester.name}</p>
       </div>
       <ClassForm

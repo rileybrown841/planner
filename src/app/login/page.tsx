@@ -31,7 +31,7 @@ export default async function LoginPage({
           </span>
           Planner
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
+        <h1 className="font-display text-3xl">Sign in</h1>
         <p className="text-sm text-zinc-500">
           Your personal planner. One account, synced across your devices.
         </p>

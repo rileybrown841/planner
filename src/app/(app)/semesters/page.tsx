@@ -22,7 +22,7 @@ export default async function SemestersPage({ searchParams }: PageProps<"/semest
     <section className="flex flex-col gap-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Semesters</h1>
+          <h1 className="font-display text-2xl">Semesters</h1>
           <p className="text-sm text-zinc-500">
             One semester is active at a time — that&apos;s the one Classes shows.
           </p>

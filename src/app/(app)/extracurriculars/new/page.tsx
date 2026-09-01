@@ -9,7 +9,7 @@ export default async function NewExtracurricularPage() {
   await requireUser();
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">New activity</h1>
+      <h1 className="font-display text-2xl">New activity</h1>
       <ExtracurricularForm
         action={createExtracurricular}
         submitLabel="Add activity"

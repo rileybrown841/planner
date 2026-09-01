@@ -42,7 +42,7 @@ export default async function ExtracurricularDetailPage({
           style={colorDotStyle(activity.color)}
         />
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold tracking-tight">{activity.name}</h1>
+          <h1 className="font-display text-2xl">{activity.name}</h1>
           <p className="text-sm text-zinc-500">{ACTIVITY_TYPE_LABEL[activity.type]}</p>
         </div>
         <div className="ml-auto flex gap-2">

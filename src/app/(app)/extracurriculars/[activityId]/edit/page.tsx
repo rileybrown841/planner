@@ -16,7 +16,7 @@ export default async function EditExtracurricularPage({
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">Edit {activity.name}</h1>
+      <h1 className="font-display text-2xl">Edit {activity.name}</h1>
       <ExtracurricularForm
         action={updateExtracurricular.bind(null, activity.id)}
         defaultValue={activity}

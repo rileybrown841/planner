@@ -3,7 +3,7 @@ import { cn } from "@/lib/cn";
 
 /** Shared class for text/date/time inputs and selects. */
 export const controlClass =
-  "w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/25 disabled:opacity-60 dark:border-white/15 dark:bg-white/5";
+  "w-full rounded-lg border border-black/20 bg-white px-3 py-2 text-base outline-none transition-colors focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/30 disabled:opacity-60 dark:border-white/20 dark:bg-white/5";
 
 export function FormField({
   label,

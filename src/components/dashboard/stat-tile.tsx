@@ -25,7 +25,7 @@ export function StatTile({
       </span>
       <span
         className={cn(
-          "text-2xl font-semibold tracking-tight",
+          "text-2xl font-bold",
           tone === "warn" && "text-amber-600 dark:text-amber-400",
         )}
       >
