@@ -83,6 +83,37 @@ export interface Extracurricular {
   updated_at: string;
 }
 
+export type HabitKind = "counter" | "checklist";
+
+export interface Habit {
+  id: string;
+  user_id: string;
+  name: string;
+  kind: HabitKind;
+  /** Daily goal for a counter (e.g. 8). null ⇒ no fixed target. */
+  target: number | null;
+  /** Counter unit label, e.g. "glasses". */
+  unit: string | null;
+  /** Optional emoji shown before the name. */
+  icon: string | null;
+  color: string | null;
+  is_archived: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HabitLog {
+  id: string;
+  user_id: string;
+  habit_id: string;
+  /** "YYYY-MM-DD" (the viewer's local day). One row per habit per day. */
+  log_date: string;
+  /** Counter total for the day, or 1 for a checked-off checklist habit. */
+  value: number;
+  created_at: string;
+}
+
 export type TaskPriority = "low" | "medium" | "high" | "urgent";
 export type TaskStatus = "todo" | "in_progress" | "done";
 

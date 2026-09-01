@@ -54,15 +54,45 @@ applied (0002 via MCP `apply_migration`). Phase 9 added no schema.
   FAB, search buttons, menu items. Calendar prev/next bumped to 40px. Reduced-
   motion guard already in `globals.css`.
 
+## Phase 7 (habits)
+
+- **Schema was already in `0001`** — `habits` (`kind` `counter|checklist`,
+  `target`, `unit`, `icon`, `color`, `is_archived`, `sort_order`) + `habit_logs`
+  (`habit_id`, `log_date` date, `value`, **unique `(habit_id, log_date)`** — one
+  row per habit per day). No migration for this phase.
+- **Reads** (`src/lib/data/habits.ts`): `listHabits()` (active first),
+  `getHabit(id)`, `listHabitLogs()` (all logs — table stays small for one user),
+  `getHabitsData()` = habits + logs. `getDashboardData()` now also returns it.
+- **Maths are client-side + pure** (`src/lib/habits.ts`): `currentStreak`
+  (counts back from today, or yesterday if today isn't logged yet),
+  `longestStreak`, `recentHistory`, `completedInWindow`, `statusLabel`, and
+  `applyLogAction` — the `useOptimistic` reducer that mirrors the server
+  read-modify-write. A day is "complete" when `value >= target` (or any
+  `value > 0` when there's no target). `log_date` is the viewer's local
+  `toDateKey`, sent by the client — never computed on the server.
+- **Quick-tap:** `<HabitTracker habits logs>` (client) holds `useOptimistic`
+  over the logs array + `useTransition` around `logHabit` (a plain
+  `(FormData)=>void` action, `increment|decrement|toggle`; 0 removes the row).
+  Renders `<HabitCard>` per habit. Used on `/habits`, `/habits/[id]`, and the
+  dashboard "Habits" `<Panel>` (active habits only, hidden when there are none).
+- **Routes:** `/habits` (active `<HabitTracker>` + archived `<details>`),
+  `/habits/new`, `/habits/[id]` (today tracker + `<HabitHistory>` = 3 stat tiles
+  + 30-day strip), `/habits/[id]/edit`. `<HabitForm>` has a controlled
+  counter/checklist toggle that shows target+unit only for counters;
+  `rawHabit()` clears target/unit server-side when kind is checklist.
+- Archive is a soft flag (`archiveHabit`/`unarchiveHabit`), not the
+  semester-style read-only guard. `deleteHabit` cascades to `habit_logs`.
+- Habits are in the ⌘K search index (`kind: "Habit"`).
+
 ## Phase 6 (dashboard)
 
 `/today` is the dashboard (PWA start_url). Page fetches `getDashboardData()`
-(`src/lib/data/dashboard.ts` = `getCalendarSources()` + `countOpenTasks()`) and
-hands it to `<Dashboard>` (client) which computes everything in the viewer's
-timezone: 3 stat tiles (`<StatTile>`), a Today panel (reuses `<TodaySchedule>` +
+(`src/lib/data/dashboard.ts` = `getCalendarSources()` + `countOpenTasks()` +
+`getHabitsData()`) and hands it to `<Dashboard>` (client) which computes
+everything in the viewer's timezone: 3 stat tiles (`<StatTile>`), a Habits panel
+(`<HabitTracker>`, Phase 7), a Today panel (reuses `<TodaySchedule>` +
 `<DueSoon>`), and `<ComingUp>` (next-7-days all-day items via
-`buildCalendarItems`, grouped by day). When Phase 7 lands, add a habits section
-to `<Dashboard>`.
+`buildCalendarItems`, grouped by day).
 
 ## Phase 5 additions (exam/project tracker, task subtasks)
 

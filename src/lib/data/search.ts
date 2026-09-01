@@ -9,12 +9,13 @@ import {
   assessmentHref,
   classHref,
   eventHref,
+  habitHref,
   taskHref,
 } from "@/lib/routes";
 
 export type SearchEntry = {
   id: string;
-  kind: "Task" | "Event" | "Exam / project" | "Class" | "Extracurricular";
+  kind: "Task" | "Event" | "Exam / project" | "Class" | "Extracurricular" | "Habit";
   title: string;
   subtitle: string | null;
   href: Route;
@@ -25,12 +26,13 @@ export const getSearchIndex = cache(async (): Promise<SearchEntry[]> => {
   await requireUser();
   const supabase = await createClient();
 
-  const [tasks, events, assessments, classes, activities] = await Promise.all([
+  const [tasks, events, assessments, classes, activities, habits] = await Promise.all([
     supabase.from("tasks").select("id, title, status").order("created_at", { ascending: false }),
     supabase.from("events").select("id, title, starts_at").order("starts_at", { ascending: false }),
     supabase.from("assessments").select("id, title, kind").order("due_date", { ascending: true }),
     supabase.from("classes").select("id, name, code"),
     supabase.from("extracurriculars").select("id, name, type"),
+    supabase.from("habits").select("id, name, kind, is_archived").order("sort_order", { ascending: true }),
   ]);
 
   const out: SearchEntry[] = [];
@@ -72,6 +74,15 @@ export const getSearchIndex = cache(async (): Promise<SearchEntry[]> => {
       title: x.name,
       subtitle: x.type,
       href: activityHref(x.id),
+    });
+  }
+  for (const h of habits.data ?? []) {
+    out.push({
+      id: h.id,
+      kind: "Habit",
+      title: h.name,
+      subtitle: h.is_archived ? "archived" : h.kind,
+      href: habitHref(h.id),
     });
   }
 

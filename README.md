@@ -9,7 +9,7 @@ Supabase.
 See [`projectplan.md`](projectplan.md) for the full product plan and phased build
 order.
 
-## Status — Phases 1–6 + 9 complete
+## Status — Phases 1–7 + 9 complete
 
 | Phase | Area | State |
 | --- | --- | --- |
@@ -19,14 +19,16 @@ order.
 | 4 | Calendar — month / week / day; events (linked/standalone, recurring); meeting frequency | ✅ |
 | 5 | Exam / project tracker — countdowns, done toggle, calendar markers (`0002`); task subtasks | ✅ |
 | 6 | Dashboard — `/today`: stat tiles, today's schedule + due tasks, 7-day "Coming up" | ✅ |
+| 7 | Habits — counter / checklist habits, quick-tap logging, streaks, 30-day history, dashboard panel | ✅ |
 | 9 | Polish — green-pastel light/dark theme, Caveat/Nunito type, ⌘K search, perceived-perf + a11y sweep | ✅ |
-| 7–8 | Habits, budgeting (`/habits`, `/budget` routable placeholders) | ⬜ deferred |
+| 8 | Budgeting (`/budget` routable placeholder) | ⬜ deferred |
 
 Migrations `0001` (SQL editor), `0002`–`0004` (via MCP) applied — `0003` adds
 semester break periods (`semesters.breaks`) and repeating-event end dates
 (`events.recurrence_until`); `0004` adds `skip_dates` for deleting a single
-recurring occurrence from the calendar. Phases 7–8 (`/habits`, `/budget`) are
-routable and show a placeholder.
+recurring occurrence from the calendar. Phase 7 needed no migration (the
+`habits` / `habit_logs` tables were already in `0001`). Phase 8 (`/budget`) is
+routable and shows a placeholder.
 
 ## Tech stack
 
@@ -127,9 +129,10 @@ src/
       tasks/                Bucketed triage board; [id] has a Steps checklist
       exams/                Exam / project tracker; [id] has a Steps checklist
       extracurriculars/     Clubs/jobs/sports CRUD; [id]/[id]/edit
+      habits/               Counter / checklist habits; quick-tap log, streaks, [id] history
       classes/ semesters/   Phase 2 — class & semester CRUD
       settings/             Account + display name
-      habits/ budget/       later-phase placeholders
+      budget/               Phase 8 placeholder
     login/  auth/callback/  Magic-link sign-in + single-user check
     offline/  manifest.ts   PWA offline page + manifest
   components/
@@ -137,20 +140,22 @@ src/
     nav/                   Sidebar, bottom tab bar, mobile header (+ ⌘K search button)
     search/                ⌘K command palette (search-palette / search-button)
     settings/              theme-toggle.tsx (Light / System / Dark)
-    dashboard/             stat tiles + "Coming up" list
+    dashboard/             stat tiles + "Coming up" list + habits panel
+    habit/                 habit card / tracker (optimistic quick-tap) / form / history
     *-form.tsx *-card.tsx  Semester/class forms, cards, editors
   lib/
     supabase/              client.ts / server.ts / proxy.ts / env.ts
     auth.ts                getUser / requireUser / isAllowedEmail
     data/                  server-only read helpers + guards.ts (archived check) + search.ts
-    actions/               Server Actions (semesters, classes, tasks, extracurriculars, settings, auth)
+    actions/               Server Actions (semesters, classes, tasks, extracurriculars, habits, calendar, settings, auth)
     schemas.ts form.ts     zod input schemas + ActionResult helpers
     dates.ts priority.ts   client-side task bucket / relative-due + priority helpers
+    habits.ts              client-safe streak / history / optimistic-log maths
     recurrence.ts calendar.ts   recurrence expansion + buildCalendarItems (client-safe)
     routes.ts nav.tsx      typed dynamic-route builders + nav config
 supabase/
-  migrations/                0001 initial schema, 0002 assessments/subtasks,
-                             0003 semester breaks + event end dates (all applied)
+  migrations/                0001 initial schema, 0002 assessments/subtasks, 0003
+                             semester breaks + event end, 0004 occurrence skip_dates (all applied)
 public/
   sw.js  icon-*.png        App-shell service worker + PWA icons
 ```

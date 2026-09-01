@@ -160,6 +160,27 @@ export const cancelOccurrenceSchema = z.object({
   date: z.iso.date(),
 });
 
+export const habitSchema = z.object({
+  name: z.string().trim().min(1, "Give the habit a name.").max(80),
+  kind: z.enum(["counter", "checklist"]),
+  target: z
+    .union([z.coerce.number().positive().max(999), z.literal("")])
+    .optional()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
+  unit: optionalText(20),
+  icon: optionalText(8),
+  color: colorField,
+});
+
+/** One quick-tap on the habit list / dashboard. `date` is the viewer's local day. */
+export const logHabitSchema = z.object({
+  habit_id: z.uuid(),
+  date: z.iso.date(),
+  action: z.enum(["increment", "decrement", "toggle"]),
+});
+
+export type HabitValues = z.infer<typeof habitSchema>;
+
 /** Quick-add: just a title, plus whatever optional bits the mini form offers. */
 export const quickTaskSchema = z.object({
   title: z.string().trim().min(1, "A task needs a title.").max(200),
