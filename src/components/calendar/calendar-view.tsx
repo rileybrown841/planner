@@ -16,11 +16,12 @@ import { CalendarHeader, type CalendarViewMode } from "@/components/calendar/cal
 import { MonthGrid } from "@/components/calendar/month-grid";
 import { TimeGrid } from "@/components/calendar/time-grid";
 
-const LEGEND = [
+const LEGEND: { label: string; color: string | null; dashed?: boolean }[] = [
   { label: "Class / activity", color: null },
   { label: "Event", color: STANDALONE_EVENT_COLOR },
   { label: "Exam / project", color: STANDALONE_EVENT_COLOR },
   { label: "Task due", color: TASK_COLOR },
+  { label: "Break", color: null, dashed: true },
 ];
 
 export function CalendarView({
@@ -98,7 +99,11 @@ export function CalendarView({
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
         {LEGEND.map((l) => (
           <span key={l.label} className="inline-flex items-center gap-1.5">
-            <span className="size-2 rounded-full" style={colorDotStyle(l.color)} />
+            {l.dashed ? (
+              <span className="size-2 rounded-[2px] border border-dashed border-zinc-400" />
+            ) : (
+              <span className="size-2 rounded-full" style={colorDotStyle(l.color)} />
+            )}
             {l.label}
           </span>
         ))}

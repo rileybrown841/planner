@@ -21,6 +21,7 @@ function rawEvent(formData: FormData) {
     location: formData.get("location") ?? undefined,
     notes: formData.get("notes") ?? undefined,
     recurrence: formData.get("recurrence") ?? "",
+    recurrence_until: formData.get("recurrence_until") ?? "",
     link: formData.get("link") ?? undefined,
   };
 }
@@ -34,6 +35,7 @@ function toRow(data: EventValues) {
     location: data.location,
     notes: data.notes,
     recurrence_rule: data.recurrence,
+    recurrence_until: data.recurrence ? data.recurrence_until : null,
     class_id: data.link.class_id,
     extracurricular_id: data.link.extracurricular_id,
   };

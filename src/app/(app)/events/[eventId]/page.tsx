@@ -59,6 +59,7 @@ export default async function EventDetailPage({ params }: PageProps<"/events/[ev
           endsAt={event.ends_at}
           allDay={event.all_day}
           recurrence={event.recurrence_rule}
+          until={event.recurrence_until}
         />
       </p>
 

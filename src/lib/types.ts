@@ -24,12 +24,23 @@ export interface Meeting {
 /** @deprecated use `Meeting` */
 export type ClassMeeting = Meeting;
 
+/** A named no-class stretch (Spring Break, reading week…). Dates are inclusive. */
+export interface SemesterBreak {
+  name: string;
+  /** "YYYY-MM-DD" */
+  start: string;
+  /** "YYYY-MM-DD" */
+  end: string;
+}
+
 export interface Semester {
   id: string;
   user_id: string;
   name: string;
   start_date: string | null;
   end_date: string | null;
+  /** No-class date ranges; class meetings are hidden on these days. */
+  breaks: SemesterBreak[];
   is_active: boolean;
   is_archived: boolean;
   created_at: string;
@@ -130,6 +141,8 @@ export interface EventRow {
   notes: string | null;
   /** null | "weekly" | "biweekly" | "monthly" — anchor is `starts_at`. */
   recurrence_rule: MeetingFreq | null;
+  /** "YYYY-MM-DD" — last day a recurring occurrence may land on. null ⇒ forever. */
+  recurrence_until: string | null;
   class_id: string | null;
   extracurricular_id: string | null;
   created_at: string;
@@ -144,7 +157,13 @@ export interface EventWithLinks extends EventRow {
 // ---------------------------------------------------------------------------
 // Calendar
 // ---------------------------------------------------------------------------
-export type CalendarItemKind = "class" | "activity" | "event" | "task" | "assessment";
+export type CalendarItemKind =
+  | "class"
+  | "activity"
+  | "event"
+  | "task"
+  | "assessment"
+  | "break";
 
 export interface CalendarItem {
   /** Stable per occurrence: `${kind}:${sourceId}:${startISO}`. */

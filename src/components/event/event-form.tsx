@@ -55,6 +55,7 @@ export function EventForm({
   const [date, setDate] = useState(start.date || defaultDate || "");
   const [startTime, setStartTime] = useState(start.time || "09:00");
   const [endTime, setEndTime] = useState(endSeed.time || "10:00");
+  const [recurrence, setRecurrence] = useState<string>(defaultValue?.recurrence_rule ?? "");
 
   const { startsAt, endsAt } = useMemo(() => {
     if (!date) return { startsAt: "", endsAt: "" };
@@ -131,19 +132,40 @@ export function EventForm({
         )}
       </div>
 
-      <FormField label="Repeats" htmlFor="recurrence">
-        <select
-          id="recurrence"
-          name="recurrence"
-          defaultValue={defaultValue?.recurrence_rule ?? ""}
-          className={controlClass}
-        >
-          <option value="">Does not repeat</option>
-          <option value="weekly">{FREQ_LABEL.weekly}</option>
-          <option value="biweekly">{FREQ_LABEL.biweekly}</option>
-          <option value="monthly">{FREQ_LABEL.monthly}</option>
-        </select>
-      </FormField>
+      <div className="flex flex-wrap gap-3">
+        <FormField label="Repeats" htmlFor="recurrence" className="flex-1">
+          <select
+            id="recurrence"
+            name="recurrence"
+            value={recurrence}
+            onChange={(e) => setRecurrence(e.target.value)}
+            className={controlClass}
+          >
+            <option value="">Does not repeat</option>
+            <option value="weekly">{FREQ_LABEL.weekly}</option>
+            <option value="biweekly">{FREQ_LABEL.biweekly}</option>
+            <option value="monthly">{FREQ_LABEL.monthly}</option>
+          </select>
+        </FormField>
+        {recurrence && (
+          <FormField
+            label="Ends"
+            htmlFor="recurrence_until"
+            error={state.fieldErrors?.recurrence_until}
+            hint="Leave blank to repeat forever."
+            className="flex-1"
+            optional
+          >
+            <input
+              id="recurrence_until"
+              name="recurrence_until"
+              type="date"
+              defaultValue={defaultValue?.recurrence_until ?? ""}
+              className={controlClass}
+            />
+          </FormField>
+        )}
+      </div>
 
       <FormField label="Link to a class or activity" htmlFor="link" optional>
         <LinkPicker

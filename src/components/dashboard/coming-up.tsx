@@ -20,7 +20,7 @@ export function ComingUp({ sources }: { sources: CalendarSourceData }) {
     const start = addDays(startOfDay(new Date()), 1);
     const end = addDays(start, 7);
     const items = buildCalendarItems(sources, start, end)
-      .filter((i) => i.allDay)
+      .filter((i) => i.allDay && i.kind !== "break")
       .sort((a, b) => a.start.getTime() - b.start.getTime());
 
     const groups: { day: Date; items: CalendarItem[] }[] = [];

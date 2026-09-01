@@ -15,6 +15,7 @@ import type {
   TaskWithLinks,
 } from "@/lib/types";
 import { eventStartDates, meetingDates } from "@/lib/recurrence";
+import { addDays, fromDateKey, maxDate, minDate, startOfDay } from "@/lib/dates";
 import { activityHref, assessmentHref, classHref, eventHref, taskHref } from "@/lib/routes";
 
 /** Standalone (unlinked) events + task due dates get these fallback colours. */
@@ -22,7 +23,7 @@ export const STANDALONE_EVENT_COLOR = "#bd9ad6"; // lilac
 export const TASK_COLOR = "#93a3ac"; // slate
 
 export type CalendarSourceData = {
-  activeSemester: Pick<Semester, "start_date" | "end_date"> | null;
+  activeSemester: Pick<Semester, "start_date" | "end_date" | "breaks"> | null;
   classes: Class[];
   activities: Extracurricular[];
   events: EventWithLinks[];
@@ -71,14 +72,36 @@ export function buildCalendarItems(
   const clamp = sources.activeSemester
     ? { start: sources.activeSemester.start_date, end: sources.activeSemester.end_date }
     : undefined;
+  const breaks = sources.activeSemester?.breaks ?? [];
 
   for (const cls of sources.classes) {
     for (const m of cls.schedule ?? []) {
-      for (const day of meetingDates(m, rangeStart, rangeEnd, clamp)) {
+      for (const day of meetingDates(m, rangeStart, rangeEnd, clamp, breaks)) {
         items.push(
           meetingItem("class", cls.id, cls.name, cls.color, cls.location, m, day, classHref(cls.id)),
         );
       }
+    }
+  }
+
+  // Break periods render as a labelled all-day chip on each day they cover.
+  for (const br of breaks) {
+    if (!br.start || !br.end) continue;
+    let day = maxDate(startOfDay(fromDateKey(br.start)), rangeStart);
+    const last = minDate(addDays(startOfDay(fromDateKey(br.end)), 1), rangeEnd);
+    for (; day < last; day = addDays(day, 1)) {
+      items.push({
+        key: `break:${br.start}:${day.toISOString()}`,
+        kind: "break",
+        sourceId: br.start,
+        title: br.name,
+        start: new Date(day),
+        end: null,
+        allDay: true,
+        color: null,
+        location: null,
+        href: "/calendar",
+      });
     }
   }
 
@@ -101,7 +124,13 @@ export function buildCalendarItems(
     const color =
       ev.class?.color ?? ev.extracurricular?.color ?? STANDALONE_EVENT_COLOR;
 
-    for (const occStart of eventStartDates(startsAt, ev.recurrence_rule, rangeStart, rangeEnd)) {
+    for (const occStart of eventStartDates(
+      startsAt,
+      ev.recurrence_rule,
+      rangeStart,
+      rangeEnd,
+      ev.recurrence_until,
+    )) {
       const end =
         !ev.all_day && durationMs > 0
           ? new Date(occStart.getTime() + durationMs)

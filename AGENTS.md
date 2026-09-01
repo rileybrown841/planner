@@ -101,6 +101,22 @@ to `<Dashboard>`.
 - Calendar shows **active-semester classes only**; activities/events/open-dated
   tasks always. `readMeetings` (FormData→rows) is shared in `src/lib/meetings.ts`.
 
+### Follow-up: breaks + event end dates (migration `0003`)
+
+- **`semesters.breaks`** — jsonb array of `{ name, start, end }` (inclusive
+  `YYYY-MM-DD`), edited via `<BreaksEditor>` on the semester form,
+  `readBreaks` in `src/lib/breaks.ts`, validated by `semesterBreakSchema`.
+  `meetingDates(…, exclude?)` drops **class** meeting occurrences whose day
+  lands in any break (activities are untouched). `buildCalendarItems` also emits
+  one all-day `kind: "break"` `CalendarItem` per covered day — `<CalendarChip>`
+  renders those as a non-interactive dashed pill; `<ComingUp>` filters them out.
+- **`events.recurrence_until`** — `date|null`, the last day a recurring series
+  produces an occurrence (`eventStartDates(…, until?)`). Surfaced as the "Ends"
+  field on `<EventForm>` (only shown when Repeats ≠ none) and on the event
+  detail page via `<EventWhen until>`.
+- `maxDate`/`minDate` now live in `src/lib/dates.ts` (were private in
+  `recurrence.ts`).
+
 ## Phase 3 additions (tasks, extracurriculars)
 
 - **Extracurriculars** are global (no semester link, no archive) — plain CRUD like

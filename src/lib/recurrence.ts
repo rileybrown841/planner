@@ -5,7 +5,18 @@
  */
 import type { Meeting, MeetingFreq } from "@/lib/types";
 import { DAYKEY_TO_JS, JS_TO_DAYKEY } from "@/lib/days";
-import { addDays, fromDateKey, startOfDay, toDateKey } from "@/lib/dates";
+import { addDays, fromDateKey, maxDate, minDate, startOfDay, toDateKey } from "@/lib/dates";
+
+/** Inclusive "YYYY-MM-DD" date range (both ends land on the day). */
+export type DateRange = { start: string; end: string };
+
+/** Does `d`'s local calendar day fall within any of the given inclusive ranges? */
+function inAnyRange(d: Date, ranges: ReadonlyArray<DateRange>): boolean {
+  const t = startOfDay(d).getTime();
+  return ranges.some(
+    (r) => t >= fromDateKey(r.start).getTime() && t <= fromDateKey(r.end).getTime(),
+  );
+}
 
 /** 1-based: which occurrence of its weekday this date is within its month. */
 export function weekOfMonth(d: Date): number {
@@ -39,13 +50,15 @@ function matchesFreq(candidate: Date, anchor: Date | null, freq: MeetingFreq): b
 
 /**
  * Local midnight Dates for every occurrence of a weekday meeting in [from, to).
- * `clamp` optionally restricts to a semester's date window.
+ * `clamp` optionally restricts to a semester's date window; `exclude` drops any
+ * occurrence that lands inside one of the given inclusive date ranges (breaks).
  */
 export function meetingDates(
   meeting: Meeting,
   from: Date,
   to: Date,
   clamp?: { start: string | null; end: string | null },
+  exclude?: ReadonlyArray<DateRange>,
 ): Date[] {
   const targetJs = DAYKEY_TO_JS[meeting.day];
   const freq = meeting.freq ?? "weekly";
@@ -62,21 +75,28 @@ export function meetingDates(
   let d = new Date(lo);
   while (d.getDay() !== targetJs) d = addDays(d, 1);
   for (; d < hi; d = addDays(d, 7)) {
-    if (matchesFreq(d, anchor, freq)) out.push(new Date(d));
+    if (!matchesFreq(d, anchor, freq)) continue;
+    if (exclude?.length && inAnyRange(d, exclude)) continue;
+    out.push(new Date(d));
   }
   return out;
 }
 
-/** Occurrence start Dates (with time) for an event in [from, to). */
+/**
+ * Occurrence start Dates (with time) for an event in [from, to).
+ * `until` ("YYYY-MM-DD", inclusive) caps a recurring series' last occurrence.
+ */
 export function eventStartDates(
   startsAt: Date,
   freq: MeetingFreq | null,
   from: Date,
   to: Date,
+  until?: string | null,
 ): Date[] {
   if (!freq) {
     return startsAt >= from && startsAt < to ? [new Date(startsAt)] : [];
   }
+  const hi = until ? minDate(to, addDays(fromDateKey(until), 1)) : to;
   const meeting: Meeting = {
     day: JS_TO_DAYKEY[startsAt.getDay()],
     start: "00:00",
@@ -84,16 +104,9 @@ export function eventStartDates(
     freq,
     anchor: toDateKey(startsAt),
   };
-  return meetingDates(meeting, from, to).map((d) => {
+  return meetingDates(meeting, from, hi).map((d) => {
     const x = new Date(d);
     x.setHours(startsAt.getHours(), startsAt.getMinutes(), 0, 0);
     return x;
   });
-}
-
-function maxDate(a: Date, b: Date): Date {
-  return a.getTime() >= b.getTime() ? a : b;
-}
-function minDate(a: Date, b: Date): Date {
-  return a.getTime() <= b.getTime() ? a : b;
 }

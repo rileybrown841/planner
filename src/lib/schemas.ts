@@ -40,11 +40,24 @@ export const meetingSchema = z
 /** @deprecated use `meetingSchema` */
 export const classMeetingSchema = meetingSchema;
 
+/** A no-class stretch on a semester (Spring Break, reading week…). */
+export const semesterBreakSchema = z
+  .object({
+    name: z.string().trim().min(1, "Name the break.").max(60),
+    start: z.iso.date(),
+    end: z.iso.date(),
+  })
+  .refine((b) => b.end >= b.start, {
+    error: "End can't be before the start.",
+    path: ["end"],
+  });
+
 export const semesterSchema = z
   .object({
     name: z.string().trim().min(1, "Give the semester a name.").max(100),
     start_date: z.union([z.iso.date(), z.literal("")]).transform((v) => v || null),
     end_date: z.union([z.iso.date(), z.literal("")]).transform((v) => v || null),
+    breaks: z.array(semesterBreakSchema).max(20),
   })
   .refine(
     (s) => !s.start_date || !s.end_date || s.end_date >= s.start_date,
@@ -126,11 +139,18 @@ export const eventSchema = z
     recurrence: z
       .union([z.enum(["weekly", "biweekly", "monthly"]), z.literal("")])
       .transform((v) => (v ? v : null)),
+    recurrence_until: z
+      .union([z.iso.date(), z.literal("")])
+      .transform((v) => v || null),
     link: linkField,
   })
   .refine((e) => !e.ends_at || e.ends_at >= e.starts_at, {
     error: "The end must be after the start.",
     path: ["ends_at"],
+  })
+  .refine((e) => !e.recurrence_until || e.recurrence_until >= e.starts_at.slice(0, 10), {
+    error: "The end date can't be before the event starts.",
+    path: ["recurrence_until"],
   });
 
 /** Quick-add: just a title, plus whatever optional bits the mini form offers. */

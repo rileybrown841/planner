@@ -22,8 +22,10 @@ order.
 | 9 | Polish — green-pastel light/dark theme, Caveat/Nunito type, ⌘K search, perceived-perf + a11y sweep | ✅ |
 | 7–8 | Habits, budgeting (`/habits`, `/budget` routable placeholders) | ⬜ deferred |
 
-Migrations `0001` (SQL editor) and `0002` (via MCP) applied. Phases 7–8
-(`/habits`, `/budget`) are routable and show a placeholder.
+Migrations `0001` (SQL editor), `0002` and `0003` (via MCP) applied — `0003`
+adds semester break periods (`semesters.breaks`) and repeating-event end dates
+(`events.recurrence_until`). Phases 7–8 (`/habits`, `/budget`) are routable and
+show a placeholder.
 
 ## Tech stack
 
@@ -146,7 +148,8 @@ src/
     recurrence.ts calendar.ts   recurrence expansion + buildCalendarItems (client-safe)
     routes.ts nav.tsx      typed dynamic-route builders + nav config
 supabase/
-  migrations/0001_initial_schema.sql   (applied)
+  migrations/                0001 initial schema, 0002 assessments/subtasks,
+                             0003 semester breaks + event end dates (all applied)
 public/
   sw.js  icon-*.png        App-shell service worker + PWA icons
 ```

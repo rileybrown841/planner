@@ -5,6 +5,17 @@ import { cn } from "@/lib/cn";
 
 /** Small pill for the month grid and the all-day row. */
 export function CalendarChip({ item }: { item: CalendarItem }) {
+  if (item.kind === "break") {
+    return (
+      <span
+        title={item.title}
+        className="truncate rounded border border-dashed border-black/25 px-1 py-0.5 text-[0.7rem] font-medium italic leading-tight text-zinc-500 dark:border-white/25 dark:text-zinc-400"
+      >
+        {item.title}
+      </span>
+    );
+  }
+
   const isTask = item.kind === "task";
   const isAssessment = item.kind === "assessment";
   const time =

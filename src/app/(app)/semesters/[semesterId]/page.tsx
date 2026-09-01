@@ -11,6 +11,15 @@ import { ReadOnlyBanner } from "@/components/read-only-banner";
 
 export const metadata: Metadata = { title: "Semester" };
 
+/** "Mar 10 – Mar 17, 2026" from two "YYYY-MM-DD" keys. */
+function formatBreakRange(start: string, end: string): string {
+  const s = new Date(`${start}T00:00:00`);
+  const e = new Date(`${end}T00:00:00`);
+  if (Number.isNaN(s.getTime()) || Number.isNaN(e.getTime())) return `${start} – ${end}`;
+  const md: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+  return `${s.toLocaleDateString(undefined, md)} – ${e.toLocaleDateString(undefined, { ...md, year: "numeric" })}`;
+}
+
 export default async function SemesterDetailPage({
   params,
 }: PageProps<"/semesters/[semesterId]">) {
@@ -48,6 +57,20 @@ export default async function SemesterDetailPage({
       </header>
 
       {semester.is_archived && <ReadOnlyBanner semesterName={semester.name} />}
+
+      {semester.breaks.length > 0 && (
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Breaks</h2>
+          <ul className="flex flex-col gap-0.5 text-sm text-zinc-600 dark:text-zinc-300">
+            {semester.breaks.map((b) => (
+              <li key={`${b.name}-${b.start}`}>
+                <span className="font-medium">{b.name}</span>
+                <span className="text-zinc-500"> · {formatBreakRange(b.start, b.end)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <ClassList classes={classes} semesterId={semester.id} readOnly={semester.is_archived} />
     </section>

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { semesterSchema } from "@/lib/schemas";
+import { readBreaks } from "@/lib/breaks";
 import { failed, invalid, type ActionResult } from "@/lib/form";
 import { assertSemesterWritable, guardMessage } from "@/lib/data/guards";
 
@@ -12,6 +13,7 @@ function revalidateSemesterViews() {
   revalidatePath("/semesters");
   revalidatePath("/classes");
   revalidatePath("/today");
+  revalidatePath("/calendar");
 }
 
 function rawSemester(formData: FormData) {
@@ -19,6 +21,7 @@ function rawSemester(formData: FormData) {
     name: formData.get("name"),
     start_date: formData.get("start_date") ?? "",
     end_date: formData.get("end_date") ?? "",
+    breaks: readBreaks(formData),
   };
 }
 
@@ -41,6 +44,7 @@ export async function createSemester(
     name: parsed.data.name,
     start_date: parsed.data.start_date,
     end_date: parsed.data.end_date,
+    breaks: parsed.data.breaks,
     is_active: (count ?? 0) === 0, // first semester becomes the active one
   });
   if (error) return failed(error.message);
@@ -73,6 +77,7 @@ export async function updateSemester(
       name: parsed.data.name,
       start_date: parsed.data.start_date,
       end_date: parsed.data.end_date,
+      breaks: parsed.data.breaks,
     })
     .eq("id", id);
   if (error) return failed(error.message);

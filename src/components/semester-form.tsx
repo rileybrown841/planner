@@ -7,6 +7,7 @@ import type { Semester } from "@/lib/types";
 import { IDLE_RESULT, type ActionResult } from "@/lib/form";
 import { FormField, controlClass } from "@/components/ui/form-field";
 import { Button, buttonClass } from "@/components/ui/button";
+import { BreaksEditor } from "@/components/breaks-editor";
 
 export function SemesterForm({
   action,
@@ -53,6 +54,15 @@ export function SemesterForm({
           />
         </FormField>
       </div>
+
+      <FormField
+        label="Breaks"
+        error={state.fieldErrors?.breaks}
+        hint="Class meetings are hidden on these dates (e.g. Spring Break)."
+        optional
+      >
+        <BreaksEditor defaultValue={defaultValue?.breaks} />
+      </FormField>
 
       {state.status === "error" && state.message && (
         <p className="text-sm text-red-600 dark:text-red-400">{state.message}</p>
