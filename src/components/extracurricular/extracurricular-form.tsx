@@ -51,7 +51,7 @@ export function ExtracurricularForm({
       </div>
 
       <FormField label="Meeting times" error={state.fieldErrors?.schedule} optional>
-        <MeetingsEditor defaultValue={defaultValue?.schedule} />
+        <MeetingsEditor defaultValue={defaultValue?.schedule} allowFrequency />
       </FormField>
 
       {state.status === "error" && state.message && (

@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
-import { CalendarDays } from "lucide-react";
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { getCalendarSources } from "@/lib/data/calendar";
+import { CalendarView } from "@/components/calendar/calendar-view";
+import type { CalendarViewMode } from "@/components/calendar/calendar-header";
 
 export const metadata: Metadata = { title: "Calendar" };
 
-export default function CalendarPage() {
-  return (
-    <PagePlaceholder title="Calendar" icon={CalendarDays} phase="Phase 4">
-      Day, week and month views that merge class schedules, extracurricular
-      meetings, one-off events and task due dates into one colour-coded calendar.
-    </PagePlaceholder>
-  );
+const VIEWS: CalendarViewMode[] = ["month", "week", "day"];
+
+export default async function CalendarPage({ searchParams }: PageProps<"/calendar">) {
+  const [sources, params] = await Promise.all([getCalendarSources(), searchParams]);
+
+  const viewParam = typeof params.view === "string" ? params.view : "";
+  const view = VIEWS.includes(viewParam as CalendarViewMode)
+    ? (viewParam as CalendarViewMode)
+    : "month";
+  const date = typeof params.date === "string" ? params.date : "";
+
+  return <CalendarView sources={sources} initialView={view} initialDate={date} />;
 }

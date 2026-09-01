@@ -19,3 +19,7 @@ export const taskHref = (id: string) => `/tasks/${id}` as Route;
 export const editTaskHref = (id: string) => `/tasks/${id}/edit` as Route;
 export const activityHref = (id: string) => `/extracurriculars/${id}` as Route;
 export const editActivityHref = (id: string) => `/extracurriculars/${id}/edit` as Route;
+export const eventHref = (id: string) => `/events/${id}` as Route;
+export const editEventHref = (id: string) => `/events/${id}/edit` as Route;
+export const newEventHref = (dateKey?: string) =>
+  (dateKey ? `/events/new?date=${dateKey}` : "/events/new") as Route;

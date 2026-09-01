@@ -3,16 +3,26 @@
  * isn't generic-typed yet (no `supabase gen types`), so query helpers cast their
  * results to these via `.returns<T>()`.
  */
+import type { Route } from "next";
 
 export type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 
-export interface ClassMeeting {
+export type MeetingFreq = "weekly" | "biweekly" | "monthly";
+
+export interface Meeting {
   day: DayKey;
   /** 24h "HH:MM" */
   start: string;
   /** 24h "HH:MM" */
   end: string;
+  /** Absent ⇒ weekly. Classes are always weekly. */
+  freq?: MeetingFreq;
+  /** "YYYY-MM-DD" — a date the meeting occurs; required for biweekly/monthly. */
+  anchor?: string | null;
 }
+
+/** @deprecated use `Meeting` */
+export type ClassMeeting = Meeting;
 
 export interface Semester {
   id: string;
@@ -35,7 +45,7 @@ export interface Class {
   instructor: string | null;
   location: string | null;
   color: string | null;
-  schedule: ClassMeeting[];
+  schedule: Meeting[];
   created_at: string;
   updated_at: string;
 }
@@ -53,7 +63,7 @@ export interface Extracurricular {
   name: string;
   type: ActivityType;
   color: string | null;
-  schedule: ClassMeeting[];
+  schedule: Meeting[];
   created_at: string;
   updated_at: string;
 }
@@ -84,4 +94,46 @@ export type TaskActivityLink = TaskClassLink & { type: ActivityType };
 export interface TaskWithLinks extends Task {
   class: TaskClassLink | null;
   extracurricular: TaskActivityLink | null;
+}
+
+export interface EventRow {
+  id: string;
+  user_id: string;
+  title: string;
+  starts_at: string;
+  ends_at: string | null;
+  all_day: boolean;
+  location: string | null;
+  notes: string | null;
+  /** null | "weekly" | "biweekly" | "monthly" — anchor is `starts_at`. */
+  recurrence_rule: MeetingFreq | null;
+  class_id: string | null;
+  extracurricular_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EventWithLinks extends EventRow {
+  class: TaskClassLink | null;
+  extracurricular: TaskActivityLink | null;
+}
+
+// ---------------------------------------------------------------------------
+// Calendar
+// ---------------------------------------------------------------------------
+export type CalendarItemKind = "class" | "activity" | "event" | "task";
+
+export interface CalendarItem {
+  /** Stable per occurrence: `${kind}:${sourceId}:${startISO}`. */
+  key: string;
+  kind: CalendarItemKind;
+  sourceId: string;
+  title: string;
+  start: Date;
+  end: Date | null;
+  allDay: boolean;
+  color: string | null;
+  location: string | null;
+  /** Where a click navigates (task/class/activity/event detail). */
+  href: Route;
 }

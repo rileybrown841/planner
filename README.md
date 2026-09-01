@@ -9,7 +9,7 @@ Supabase.
 See [`projectplan.md`](projectplan.md) for the full product plan and phased build
 order.
 
-## Status — Phases 1–3 complete
+## Status — Phases 1–4 complete
 
 | Phase | Area | State |
 | --- | --- | --- |
@@ -17,11 +17,14 @@ order.
 | 1 | Single-user magic-link auth + route protection | ✅ |
 | 1 | DB schema + Row Level Security (`0001_initial_schema.sql`) | ✅ applied |
 | 2 | Semesters + classes CRUD; archived = read-only; settings | ✅ |
-| 3 | Tasks — app-wide quick-add, full CRUD, priority/status, date-bucket triage, filters | ✅ |
-| 3 | Extracurriculars — CRUD (clubs/jobs/sports), tasks link to a class or activity | ✅ |
+| 3 | Tasks — app-wide quick-add, full CRUD, date-bucket triage, filters | ✅ |
+| 3 | Extracurriculars — CRUD; tasks link to a class or activity | ✅ |
+| 4 | Calendar — month / week / day views merging classes, activities, events, task due dates | ✅ |
+| 4 | Events — linked or standalone, one-off or weekly/biweekly/monthly | ✅ |
+| 4 | Extracurricular meetings can be weekly / every-2-weeks / monthly | ✅ |
 
-Later phases (`/calendar`, `/exams`, `/habits`, `/budget`) are routable and show a
-placeholder naming the phase they land in.
+Later phases (`/exams`, `/habits`, `/budget`) are routable and show a placeholder
+naming the phase they land in.
 
 ## Tech stack
 
@@ -113,12 +116,14 @@ src/
   proxy.ts                  Auth session refresh + route guard (Next 16 "middleware")
   app/
     (app)/                  Signed-in shell — layout gates on requireUser() + <QuickAddFab>
-      today/                Greeting + overdue/today tasks + active semester
+      today/                Greeting + today's schedule + overdue/today tasks
+      calendar/             Month / week / day views (client-expanded recurrence)
+      events/               Event CRUD; new/[id]/[id]/edit
       tasks/                Bucketed triage board; new/[id]/[id]/edit
       extracurriculars/     Clubs/jobs/sports CRUD; [id]/[id]/edit
       classes/ semesters/   Phase 2 — class & semester CRUD
       settings/             Account + display name
-      calendar/ exams/ habits/ budget/   later-phase placeholders
+      exams/ habits/ budget/   later-phase placeholders
     login/  auth/callback/  Magic-link sign-in + single-user check
     offline/  manifest.ts   PWA offline page + manifest
   components/
@@ -132,6 +137,7 @@ src/
     actions/               Server Actions (semesters, classes, tasks, extracurriculars, settings, auth)
     schemas.ts form.ts     zod input schemas + ActionResult helpers
     dates.ts priority.ts   client-side task bucket / relative-due + priority helpers
+    recurrence.ts calendar.ts   recurrence expansion + buildCalendarItems (client-safe)
     routes.ts nav.tsx      typed dynamic-route builders + nav config
 supabase/
   migrations/0001_initial_schema.sql   (applied)

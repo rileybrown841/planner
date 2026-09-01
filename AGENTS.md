@@ -11,8 +11,28 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Planner — project notes
 
 Single-user personal planner PWA. Full plan and phased build order in
-`projectplan.md`. Phases 1–3 done; build subsequent phases in order.
+`projectplan.md`. Phases 1–4 done; build subsequent phases in order.
 Repo `github.com/rileybrown841/planner` (`main`).
+
+## Phase 4 additions (calendar, events, meeting recurrence)
+
+- **Meeting recurrence:** `Meeting` (was `ClassMeeting`) gains `freq?`
+  (`weekly`/`biweekly`/`monthly`) + `anchor?` (YYYY-MM-DD). Classes stay weekly
+  (editor hides it); extracurriculars use `<MeetingsEditor allowFrequency />`.
+  Stored in the existing jsonb `schedule` — no migration.
+- **Events:** the `events` table (title, starts_at, ends_at, all_day, location,
+  notes, `recurrence_rule`, class_id XOR extracurricular_id). `recurrence_rule`
+  holds the token `null|"weekly"|"biweekly"|"monthly"` (not iCal RRULE); anchor is
+  `starts_at`. Recurring events edit/delete as a **whole series** (one row).
+- **Recurrence expansion is client-side, no deps:** `src/lib/recurrence.ts`
+  (`meetingDates`, `eventStartDates`). `src/lib/calendar.ts` `buildCalendarItems`
+  turns sources → `CalendarItem[]` for a date range. Never expand on the server.
+- **Calendar** (`/calendar`, `?view=month|week|day&date=`): `<CalendarView>` holds
+  view+date in local state, syncs the URL with `history.replaceState` (instant
+  nav, no refetch — all sources arrive as props from `getCalendarSources()`).
+  Time-grid layout math in `src/lib/calendar-layout.ts`.
+- Calendar shows **active-semester classes only**; activities/events/open-dated
+  tasks always. `readMeetings` (FormData→rows) is shared in `src/lib/meetings.ts`.
 
 ## Phase 3 additions (tasks, extracurriculars)
 

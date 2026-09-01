@@ -6,24 +6,13 @@ import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { extracurricularSchema } from "@/lib/schemas";
 import { failed, invalid, type ActionResult } from "@/lib/form";
+import { readMeetings } from "@/lib/meetings";
 
 function revalidateActivityViews() {
   revalidatePath("/extracurriculars");
   revalidatePath("/tasks");
   revalidatePath("/today");
-}
-
-/** Zip the repeated meeting-* fields, dropping blank rows (shared with classes). */
-function readMeetings(formData: FormData) {
-  const days = formData.getAll("meeting-day");
-  const starts = formData.getAll("meeting-start");
-  const ends = formData.getAll("meeting-end");
-  const rows: { day: unknown; start: unknown; end: unknown }[] = [];
-  for (let i = 0; i < days.length; i++) {
-    if (!days[i] && !starts[i] && !ends[i]) continue;
-    rows.push({ day: days[i], start: starts[i], end: ends[i] });
-  }
-  return rows;
+  revalidatePath("/calendar");
 }
 
 function rawActivity(formData: FormData) {

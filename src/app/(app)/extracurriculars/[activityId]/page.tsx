@@ -8,7 +8,7 @@ import { deleteExtracurricular } from "@/lib/actions/extracurriculars";
 import { editActivityHref } from "@/lib/routes";
 import { ACTIVITY_TYPE_LABEL } from "@/lib/activity";
 import { colorDotStyle } from "@/lib/colors";
-import { DAY_LABELS, formatTime, sortMeetings } from "@/lib/days";
+import { DAY_LABELS, FREQ_LABEL, formatTime, sortMeetings } from "@/lib/days";
 import { buttonClass } from "@/components/ui/button";
 import { ConfirmSubmit } from "@/components/confirm-submit";
 import { TaskChecklist } from "@/components/task/task-checklist";
@@ -71,7 +71,14 @@ export default async function ExtracurricularDetailPage({
           <ul className="mt-2 divide-y divide-black/5 rounded-xl border border-black/10 dark:divide-white/5 dark:border-white/10">
             {meetings.map((m, i) => (
               <li key={i} className="flex items-center justify-between px-4 py-2.5 text-sm">
-                <span className="font-medium">{DAY_LABELS[m.day]}</span>
+                <span className="font-medium">
+                  {DAY_LABELS[m.day]}
+                  {m.freq && m.freq !== "weekly" && (
+                    <span className="ml-2 font-normal text-zinc-400">
+                      {FREQ_LABEL[m.freq].toLowerCase()}
+                    </span>
+                  )}
+                </span>
                 <span className="text-zinc-500">
                   {formatTime(m.start)} – {formatTime(m.end)}
                 </span>

@@ -4,8 +4,10 @@ import { requireUser } from "@/lib/auth";
 import { displayName } from "@/lib/user";
 import { getActiveSemester } from "@/lib/data/semesters";
 import { listOpenDatedTasks } from "@/lib/data/tasks";
+import { getCalendarSources } from "@/lib/data/calendar";
 import { buttonClass } from "@/components/ui/button";
 import { DueSoon } from "@/components/task/due-soon";
+import { TodaySchedule } from "@/components/calendar/today-schedule";
 
 export const metadata: Metadata = { title: "Today" };
 
@@ -13,7 +15,7 @@ const ROADMAP = [
   { phase: "Phase 1", label: "Foundation — auth, PWA, navigation shell", done: true },
   { phase: "Phase 2", label: "Semesters & classes", done: true },
   { phase: "Phase 3", label: "Tasks & extracurriculars", done: true },
-  { phase: "Phase 4", label: "Unified calendar" },
+  { phase: "Phase 4", label: "Unified calendar", done: true },
   { phase: "Phase 5", label: "Exam & project tracker" },
   { phase: "Phase 6", label: "Day-at-a-glance dashboard" },
   { phase: "Phase 7", label: "Habit tracking" },
@@ -22,10 +24,11 @@ const ROADMAP = [
 ];
 
 export default async function TodayPage() {
-  const [user, activeSemester, datedTasks] = await Promise.all([
+  const [user, activeSemester, datedTasks, calendarSources] = await Promise.all([
     requireUser(),
     getActiveSemester(),
     listOpenDatedTasks(),
+    getCalendarSources(),
   ]);
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
@@ -44,6 +47,20 @@ export default async function TodayPage() {
           })}
         </p>
       </header>
+
+      <div className="rounded-2xl border border-black/10 bg-white/50 p-5 dark:border-white/10 dark:bg-white/[0.02]">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+            Today&apos;s schedule
+          </h2>
+          <Link href="/calendar" className="text-xs text-indigo-600 hover:underline dark:text-indigo-400">
+            Calendar →
+          </Link>
+        </div>
+        <div className="mt-2">
+          <TodaySchedule sources={calendarSources} />
+        </div>
+      </div>
 
       <div className="rounded-2xl border border-black/10 bg-white/50 p-5 dark:border-white/10 dark:bg-white/[0.02]">
         <div className="flex items-center justify-between">

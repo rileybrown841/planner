@@ -24,7 +24,13 @@ export type NavItem = {
 
 export const NAV_ITEMS: NavItem[] = [
   { href: "/today", label: "Today", icon: LayoutDashboard, primary: true },
-  { href: "/calendar", label: "Calendar", icon: CalendarDays, primary: true },
+  {
+    href: "/calendar",
+    label: "Calendar",
+    icon: CalendarDays,
+    primary: true,
+    alsoActiveFor: ["/events"],
+  },
   { href: "/tasks", label: "Tasks", icon: ListChecks, primary: true },
   { href: "/habits", label: "Habits", icon: Sparkles, primary: true },
   { href: "/budget", label: "Budget", icon: Wallet, primary: true },

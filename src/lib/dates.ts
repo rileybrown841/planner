@@ -28,6 +28,36 @@ export function addDays(d: Date, n: number): Date {
   return x;
 }
 
+/** Local "YYYY-MM-DD" for a Date. */
+export function toDateKey(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/** Local midnight Date from a "YYYY-MM-DD" string. */
+export function fromDateKey(s: string): Date {
+  return new Date(`${s}T00:00:00`);
+}
+
+export function sameDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+/** Monday-of-the-week (local midnight). */
+export function startOfWeek(d: Date): Date {
+  const x = startOfDay(d);
+  const diff = (x.getDay() + 6) % 7; // 0 = Monday
+  return addDays(x, -diff);
+}
+
+export function startOfMonth(d: Date): Date {
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+
 /** Which triage bucket a due date falls into, relative to `now`. */
 export function bucketFor(due: string | null, now: Date = new Date()): DueBucket {
   if (!due) return "someday";

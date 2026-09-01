@@ -9,25 +9,13 @@ import { classSchema } from "@/lib/schemas";
 import { failed, invalid, type ActionResult } from "@/lib/form";
 import { NotFoundError, assertSemesterWritable, guardMessage } from "@/lib/data/guards";
 import { classesHref } from "@/lib/routes";
+import { readMeetings } from "@/lib/meetings";
 
 function revalidateClassViews(semesterId: string) {
   revalidatePath("/classes");
   revalidatePath("/today");
+  revalidatePath("/calendar");
   revalidatePath(`/semesters/${semesterId}`);
-}
-
-/** Zip the repeated meeting-* fields into rows, dropping any that are blank. */
-function readMeetings(formData: FormData) {
-  const days = formData.getAll("meeting-day");
-  const starts = formData.getAll("meeting-start");
-  const ends = formData.getAll("meeting-end");
-
-  const rows: { day: unknown; start: unknown; end: unknown }[] = [];
-  for (let i = 0; i < days.length; i++) {
-    if (!days[i] && !starts[i] && !ends[i]) continue;
-    rows.push({ day: days[i], start: starts[i], end: ends[i] });
-  }
-  return rows;
 }
 
 function rawClass(formData: FormData) {
