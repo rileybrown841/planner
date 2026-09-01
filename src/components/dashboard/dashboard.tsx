@@ -65,9 +65,9 @@ export function Dashboard({
           href="/tasks"
         />
         <StatTile
-          label="Next deadline"
+          label="Next exam / project"
           value={nextAssessment ? formatRelativeDue(nextAssessment.due_date) : "—"}
-          sublabel={nextAssessment?.title ?? "Nothing scheduled"}
+          sublabel={nextAssessment?.title ?? "None scheduled"}
           href={nextAssessment ? assessmentHref(nextAssessment.id) : "/exams"}
         />
         <StatTile label="Open tasks" value={openTaskCount} href="/tasks" />
