@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { CalendarItem } from "@/lib/types";
 import type { CalendarSourceData } from "@/lib/calendar";
 import { STANDALONE_EVENT_COLOR, TASK_COLOR, buildCalendarItems } from "@/lib/calendar";
 import {
@@ -15,6 +16,7 @@ import { colorDotStyle } from "@/lib/colors";
 import { CalendarHeader, type CalendarViewMode } from "@/components/calendar/calendar-header";
 import { MonthGrid } from "@/components/calendar/month-grid";
 import { TimeGrid } from "@/components/calendar/time-grid";
+import { OccurrenceDialog } from "@/components/calendar/occurrence-dialog";
 
 const LEGEND: { label: string; color: string | null; dashed?: boolean }[] = [
   { label: "Class / activity", color: null },
@@ -38,6 +40,7 @@ export function CalendarView({
     const d = initialDate ? fromDateKey(initialDate) : new Date();
     return Number.isNaN(d.getTime()) ? startOfDay(new Date()) : startOfDay(d);
   });
+  const [selected, setSelected] = useState<CalendarItem | null>(null);
 
   function go(v: CalendarViewMode, a: Date) {
     setView(v);
@@ -91,10 +94,17 @@ export function CalendarView({
       />
 
       {view === "month" ? (
-        <MonthGrid anchor={anchor} items={items} onSelectDay={(d) => go("day", d)} />
+        <MonthGrid
+          anchor={anchor}
+          items={items}
+          onSelectDay={(d) => go("day", d)}
+          onSelectItem={setSelected}
+        />
       ) : (
-        <TimeGrid days={days} items={items} />
+        <TimeGrid days={days} items={items} onSelectItem={setSelected} />
       )}
+
+      <OccurrenceDialog item={selected} onClose={() => setSelected(null)} />
 
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
         {LEGEND.map((l) => (

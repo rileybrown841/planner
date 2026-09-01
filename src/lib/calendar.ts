@@ -15,7 +15,7 @@ import type {
   TaskWithLinks,
 } from "@/lib/types";
 import { eventStartDates, meetingDates } from "@/lib/recurrence";
-import { addDays, fromDateKey, maxDate, minDate, startOfDay } from "@/lib/dates";
+import { addDays, fromDateKey, maxDate, minDate, startOfDay, toDateKey } from "@/lib/dates";
 import { activityHref, assessmentHref, classHref, eventHref, taskHref } from "@/lib/routes";
 
 /** Standalone (unlinked) events + task due dates get these fallback colours. */
@@ -59,6 +59,7 @@ function meetingItem(
     color,
     location,
     href,
+    recurring: true,
   };
 }
 
@@ -75,8 +76,10 @@ export function buildCalendarItems(
   const breaks = sources.activeSemester?.breaks ?? [];
 
   for (const cls of sources.classes) {
+    const skip = new Set(cls.skip_dates ?? []);
     for (const m of cls.schedule ?? []) {
       for (const day of meetingDates(m, rangeStart, rangeEnd, clamp, breaks)) {
+        if (skip.has(toDateKey(day))) continue;
         items.push(
           meetingItem("class", cls.id, cls.name, cls.color, cls.location, m, day, classHref(cls.id)),
         );
@@ -106,8 +109,10 @@ export function buildCalendarItems(
   }
 
   for (const act of sources.activities) {
+    const skip = new Set(act.skip_dates ?? []);
     for (const m of act.schedule ?? []) {
       for (const day of meetingDates(m, rangeStart, rangeEnd)) {
+        if (skip.has(toDateKey(day))) continue;
         items.push(
           meetingItem("activity", act.id, act.name, act.color, null, m, day, activityHref(act.id)),
         );
@@ -123,6 +128,7 @@ export function buildCalendarItems(
       : 0;
     const color =
       ev.class?.color ?? ev.extracurricular?.color ?? STANDALONE_EVENT_COLOR;
+    const skip = new Set(ev.skip_dates ?? []);
 
     for (const occStart of eventStartDates(
       startsAt,
@@ -131,6 +137,7 @@ export function buildCalendarItems(
       rangeEnd,
       ev.recurrence_until,
     )) {
+      if (skip.has(toDateKey(occStart))) continue;
       const end =
         !ev.all_day && durationMs > 0
           ? new Date(occStart.getTime() + durationMs)
@@ -146,6 +153,7 @@ export function buildCalendarItems(
         color,
         location: ev.location,
         href: eventHref(ev.id),
+        recurring: !!ev.recurrence_rule,
       });
     }
   }

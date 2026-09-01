@@ -1,10 +1,17 @@
-import Link from "next/link";
+"use client";
+
 import type { CalendarItem } from "@/lib/types";
 import { colorDotStyle } from "@/lib/colors";
 import { cn } from "@/lib/cn";
 
-/** Small pill for the month grid and the all-day row. */
-export function CalendarChip({ item }: { item: CalendarItem }) {
+/** Small pill for the month grid and the all-day row. Click opens the occurrence popover. */
+export function CalendarChip({
+  item,
+  onSelect,
+}: {
+  item: CalendarItem;
+  onSelect: (item: CalendarItem) => void;
+}) {
   if (item.kind === "break") {
     return (
       <span
@@ -24,11 +31,12 @@ export function CalendarChip({ item }: { item: CalendarItem }) {
       : null;
 
   return (
-    <Link
-      href={item.href}
+    <button
+      type="button"
+      onClick={() => onSelect(item)}
       title={item.title}
       className={cn(
-        "focus-ring flex items-center gap-1 truncate rounded px-1 py-0.5 text-[0.7rem] leading-tight",
+        "focus-ring flex w-full items-center gap-1 truncate rounded px-1 py-0.5 text-left text-[0.7rem] leading-tight",
         isTask
           ? "border border-dashed border-black/25 text-zinc-600 dark:border-white/30 dark:text-zinc-300"
           : isAssessment
@@ -43,6 +51,6 @@ export function CalendarChip({ item }: { item: CalendarItem }) {
       />
       {time && <span className="shrink-0 tabular-nums text-zinc-400">{time}</span>}
       <span className="truncate">{item.title}</span>
-    </Link>
+    </button>
   );
 }

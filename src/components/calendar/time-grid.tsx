@@ -17,7 +17,15 @@ function formatHour(h: number): string {
   return h < 12 ? `${h} AM` : `${h - 12} PM`;
 }
 
-export function TimeGrid({ days, items }: { days: Date[]; items: CalendarItem[] }) {
+export function TimeGrid({
+  days,
+  items,
+  onSelectItem,
+}: {
+  days: Date[];
+  items: CalendarItem[];
+  onSelectItem: (item: CalendarItem) => void;
+}) {
   const [nowMin, setNowMin] = useState<number | null>(null);
   useEffect(() => {
     const tick = () => {
@@ -68,7 +76,7 @@ export function TimeGrid({ days, items }: { days: Date[]; items: CalendarItem[] 
               </div>
               <div className="flex min-h-[26px] flex-col gap-0.5 p-0.5">
                 {allDayFor(day).map((i) => (
-                  <CalendarChip key={i.key} item={i} />
+                  <CalendarChip key={i.key} item={i} onSelect={onSelectItem} />
                 ))}
               </div>
             </div>
@@ -112,6 +120,7 @@ export function TimeGrid({ days, items }: { days: Date[]; items: CalendarItem[] 
                   placed={p}
                   gridStartMin={gridStartMin}
                   pxPerMin={PX_PER_MIN}
+                  onSelect={onSelectItem}
                 />
               ))}
 

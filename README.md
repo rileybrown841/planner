@@ -22,10 +22,11 @@ order.
 | 9 | Polish — green-pastel light/dark theme, Caveat/Nunito type, ⌘K search, perceived-perf + a11y sweep | ✅ |
 | 7–8 | Habits, budgeting (`/habits`, `/budget` routable placeholders) | ⬜ deferred |
 
-Migrations `0001` (SQL editor), `0002` and `0003` (via MCP) applied — `0003`
-adds semester break periods (`semesters.breaks`) and repeating-event end dates
-(`events.recurrence_until`). Phases 7–8 (`/habits`, `/budget`) are routable and
-show a placeholder.
+Migrations `0001` (SQL editor), `0002`–`0004` (via MCP) applied — `0003` adds
+semester break periods (`semesters.breaks`) and repeating-event end dates
+(`events.recurrence_until`); `0004` adds `skip_dates` for deleting a single
+recurring occurrence from the calendar. Phases 7–8 (`/habits`, `/budget`) are
+routable and show a placeholder.
 
 ## Tech stack
 

@@ -153,6 +153,13 @@ export const eventSchema = z
     path: ["recurrence_until"],
   });
 
+/** "Delete this one occurrence" from the calendar. */
+export const cancelOccurrenceSchema = z.object({
+  kind: z.enum(["class", "activity", "event"]),
+  id: z.uuid(),
+  date: z.iso.date(),
+});
+
 /** Quick-add: just a title, plus whatever optional bits the mini form offers. */
 export const quickTaskSchema = z.object({
   title: z.string().trim().min(1, "A task needs a title.").max(200),

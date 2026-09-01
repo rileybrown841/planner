@@ -117,6 +117,23 @@ to `<Dashboard>`.
 - `maxDate`/`minDate` now live in `src/lib/dates.ts` (were private in
   `recurrence.ts`).
 
+### Follow-up: per-occurrence delete (migration `0004`)
+
+- **`classes.skip_dates` / `extracurriculars.skip_dates` / `events.skip_dates`**
+  — jsonb `"YYYY-MM-DD"[]`. `buildCalendarItems` drops any class/activity/event
+  occurrence whose local `toDateKey` is in its source's `skip_dates`, and stamps
+  `recurring` on each `CalendarItem`.
+- **Every non-break calendar item is a `<button>`** (`<CalendarChip>` /
+  `<EventBlock>`) that opens `<OccurrenceDialog>` (state held in `<CalendarView>`
+  as `selected`). The dialog offers "Open details" + — for class/activity/event —
+  "Delete this occurrence" → `cancelOccurrence` (`src/lib/actions/calendar.ts`,
+  `cancelOccurrenceSchema`). A non-recurring event is deleted outright; anything
+  recurring gets the date appended to `skip_dates`. Dialog closes on success
+  (same `useActionState` + effect pattern as `<QuickAddForm>`); the action's
+  `revalidatePath` refreshes the calendar.
+- Existing class/activity/event update actions set explicit columns, so
+  `skip_dates` survives edits; a row delete drops its own jsonb.
+
 ## Phase 3 additions (tasks, extracurriculars)
 
 - **Extracurriculars** are global (no semester link, no archive) — plain CRUD like

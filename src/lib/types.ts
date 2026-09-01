@@ -57,6 +57,8 @@ export interface Class {
   location: string | null;
   color: string | null;
   schedule: Meeting[];
+  /** "YYYY-MM-DD" dates where a single meeting occurrence was cancelled. */
+  skip_dates: string[];
   created_at: string;
   updated_at: string;
 }
@@ -75,6 +77,8 @@ export interface Extracurricular {
   type: ActivityType;
   color: string | null;
   schedule: Meeting[];
+  /** "YYYY-MM-DD" dates where a single meeting occurrence was cancelled. */
+  skip_dates: string[];
   created_at: string;
   updated_at: string;
 }
@@ -143,6 +147,8 @@ export interface EventRow {
   recurrence_rule: MeetingFreq | null;
   /** "YYYY-MM-DD" — last day a recurring occurrence may land on. null ⇒ forever. */
   recurrence_until: string | null;
+  /** "YYYY-MM-DD" dates where a single occurrence of a recurring event was cancelled. */
+  skip_dates: string[];
   class_id: string | null;
   extracurricular_id: string | null;
   created_at: string;
@@ -176,6 +182,8 @@ export interface CalendarItem {
   allDay: boolean;
   color: string | null;
   location: string | null;
-  /** Where a click navigates (task/class/activity/event detail). */
+  /** Where "Open details" navigates (task/class/activity/event detail). */
   href: Route;
+  /** True when this item is one instance of a repeating series (class/activity meeting, recurring event). */
+  recurring?: boolean;
 }

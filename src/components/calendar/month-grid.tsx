@@ -11,10 +11,12 @@ export function MonthGrid({
   anchor,
   items,
   onSelectDay,
+  onSelectItem,
 }: {
   anchor: Date;
   items: CalendarItem[];
   onSelectDay: (day: Date) => void;
+  onSelectItem: (item: CalendarItem) => void;
 }) {
   const gridStart = startOfWeek(startOfMonth(anchor));
   const days = Array.from({ length: 42 }, (_, i) => addDays(gridStart, i));
@@ -65,7 +67,7 @@ export function MonthGrid({
                 {day.getDate()}
               </button>
               {dayItems.slice(0, MAX_CHIPS).map((i) => (
-                <CalendarChip key={i.key} item={i} />
+                <CalendarChip key={i.key} item={i} onSelect={onSelectItem} />
               ))}
               {extra > 0 && (
                 <button
