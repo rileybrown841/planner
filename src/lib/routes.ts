@@ -25,5 +25,7 @@ export const assessmentHref = (id: string) => `/exams/${id}` as Route;
 export const editAssessmentHref = (id: string) => `/exams/${id}/edit` as Route;
 export const habitHref = (id: string) => `/habits/${id}` as Route;
 export const editHabitHref = (id: string) => `/habits/${id}/edit` as Route;
+export const editCategoryHref = (id: string) => `/budget/categories/${id}/edit` as Route;
+export const editTransactionHref = (id: string) => `/budget/transactions/${id}/edit` as Route;
 export const newEventHref = (dateKey?: string) =>
   (dateKey ? `/events/new?date=${dateKey}` : "/events/new") as Route;

@@ -191,6 +191,40 @@ export interface EventWithLinks extends EventRow {
   extracurricular: TaskActivityLink | null;
 }
 
+export type TxnType = "expense" | "income";
+
+export interface BudgetCategory {
+  id: string;
+  user_id: string;
+  name: string;
+  /** Spending cap per calendar month; 0 ⇒ untracked. */
+  monthly_limit: number;
+  color: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Transaction {
+  id: string;
+  user_id: string;
+  /** null ⇒ uncategorised (or its category was deleted). */
+  category_id: string | null;
+  /** Always positive; `type` gives the direction. */
+  amount: number;
+  type: TxnType;
+  /** "YYYY-MM-DD" — the viewer's local day it happened. */
+  occurred_on: string;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type TransactionCategoryLink = { id: string; name: string; color: string | null };
+
+export interface TransactionWithCategory extends Transaction {
+  category: TransactionCategoryLink | null;
+}
+
 // ---------------------------------------------------------------------------
 // Calendar
 // ---------------------------------------------------------------------------

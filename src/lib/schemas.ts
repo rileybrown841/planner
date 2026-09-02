@@ -181,6 +181,29 @@ export const logHabitSchema = z.object({
 
 export type HabitValues = z.infer<typeof habitSchema>;
 
+export const budgetCategorySchema = z.object({
+  name: z.string().trim().min(1, "Name the category.").max(60),
+  monthly_limit: z.coerce
+    .number({ error: "Enter a number." })
+    .min(0, "Can't be negative.")
+    .max(1_000_000),
+  color: colorField,
+});
+
+export const transactionSchema = z.object({
+  amount: z.coerce
+    .number({ error: "Enter an amount." })
+    .positive("Must be more than zero.")
+    .max(1_000_000),
+  type: z.enum(["expense", "income"]),
+  category_id: uuidOrEmpty,
+  occurred_on: z.iso.date(),
+  note: optionalText(200),
+});
+
+export type BudgetCategoryValues = z.infer<typeof budgetCategorySchema>;
+export type TransactionValues = z.infer<typeof transactionSchema>;
+
 /** Quick-add: just a title, plus whatever optional bits the mini form offers. */
 export const quickTaskSchema = z.object({
   title: z.string().trim().min(1, "A task needs a title.").max(200),

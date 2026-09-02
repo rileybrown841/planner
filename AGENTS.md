@@ -11,10 +11,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Planner — project notes
 
 Single-user personal planner PWA. Full plan and phased build order in
-`projectplan.md`. Phases 1–6 + 9 done; phases 7 (habits) and 8 (budgeting) were
-deferred by the user — build them next, in order.
-Repo `github.com/rileybrown841/planner` (`main`). Migrations `0001`, `0002`
-applied (0002 via MCP `apply_migration`). Phase 9 added no schema.
+`projectplan.md`. **All nine phases are built.**
+Repo `github.com/rileybrown841/planner` (`main`). Migrations `0001`–`0004`
+applied (`0002`–`0004` via MCP `apply_migration`). Phases 7–9 added no schema.
 
 ## Phase 9 (polish — theme, type, search, perf, a11y)
 
@@ -53,6 +52,37 @@ applied (0002 via MCP `apply_migration`). Phase 9 added no schema.
   `var(--accent)` on `:focus-visible`) on nav links, calendar chips/cells, the
   FAB, search buttons, menu items. Calendar prev/next bumped to 40px. Reduced-
   motion guard already in `globals.css`.
+
+## Phase 8 (budgeting)
+
+- **Schema was already in `0001`** — `budget_categories` (`name`,
+  `monthly_limit` numeric, `color`) + `transactions` (`category_id` **nullable,
+  `on delete set null`**, `amount` numeric **always positive**, `type`
+  `expense|income`, `occurred_on` date, `note`). No migration.
+- **Reads** (`src/lib/data/budget.ts`): `listBudgetCategories()`,
+  `getBudgetCategory(id)`, `listTransactions()` (all, newest first, with
+  `category:budget_categories(...)` embed), `getTransaction(id)`, `getBudgetData()`
+  = categories + transactions.
+- **Maths client-side + pure** (`src/lib/budget.ts`): `monthKey`/`txnMonth`/
+  `monthLabel`/`shiftMonth`, `monthSummary(categories, transactions, "YYYY-MM")`
+  → per-category `{spent, limit, remaining, pct, over}` + totals
+  `{totalSpent, totalBudgeted, totalIncome, net, uncategorisedSpent}`, and
+  `groupByMonth` for the log. `occurred_on` is the viewer's local `toDateKey`,
+  sent by the client. `$` formatting is `src/lib/money.ts`.
+- **`<BudgetOverview categories transactions>`** (client) computes the current
+  local month: 3 tiles (Spent / Budgeted / Left-or-Over), an income+net line,
+  `<CategoryProgress>` bars (sorted by % desc; amber ≥80%, red over), an
+  Uncategorised line, and this month's `<TransactionRow>`s.
+- **`<QuickTransaction categories>`** — inline expense capture on `/budget`
+  (`createTransactionQuick` returns `succeeded()`, form `.reset()`s on success,
+  like `<QuickAddForm>`). Income / back-dated entries use the full
+  `<TransactionForm>` at `/budget/transactions/new`.
+- **Routes:** `/budget` (overview), `/budget/transactions` (full log grouped by
+  month via `<TransactionList>`), `/budget/transactions/new` + `/[id]/edit`,
+  `/budget/categories/new` + `/[categoryId]/edit` (delete lives on the edit
+  page). Category names + edit link are in the ⌘K index (`kind: "Budget category"`).
+- `deleteBudgetCategory` relies on the FK `set null` — transactions keep their
+  history and become uncategorised.
 
 ## Phase 7 (habits)
 
