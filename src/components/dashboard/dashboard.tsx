@@ -4,14 +4,12 @@ import Link from "next/link";
 import { useMemo, type ReactNode } from "react";
 import type { Route } from "next";
 import type { CalendarSources } from "@/lib/data/calendar";
-import type { HabitsData } from "@/lib/data/habits";
 import { bucketFor, formatRelativeDue } from "@/lib/dates";
 import { assessmentHref } from "@/lib/routes";
 import { StatTile } from "@/components/dashboard/stat-tile";
 import { ComingUp } from "@/components/dashboard/coming-up";
 import { TodaySchedule } from "@/components/calendar/today-schedule";
 import { DueSoon } from "@/components/task/due-soon";
-import { HabitTracker } from "@/components/habit/habit-tracker";
 
 function Panel({
   title,
@@ -43,11 +41,9 @@ function Panel({
 export function Dashboard({
   sources,
   openTaskCount,
-  habits,
 }: {
   sources: CalendarSources;
   openTaskCount: number;
-  habits: HabitsData;
 }) {
   const { dueToday, overdue, nextAssessment } = useMemo(() => {
     const buckets = sources.tasks.map((t) => bucketFor(t.due_date));
@@ -57,11 +53,6 @@ export function Dashboard({
       nextAssessment: sources.assessments.find((a) => a.due_date) ?? null,
     };
   }, [sources]);
-
-  const activeHabits = useMemo(
-    () => habits.habits.filter((h) => !h.is_archived),
-    [habits.habits],
-  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -81,12 +72,6 @@ export function Dashboard({
         />
         <StatTile label="Open tasks" value={openTaskCount} href="/tasks" />
       </div>
-
-      {activeHabits.length > 0 && (
-        <Panel title="Habits" href="/habits" hrefLabel="All habits →">
-          <HabitTracker habits={activeHabits} logs={habits.logs} />
-        </Panel>
-      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Panel title="Today" href="/calendar" hrefLabel="Calendar →">

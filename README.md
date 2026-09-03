@@ -19,7 +19,7 @@ order.
 | 4 | Calendar — month / week / day; events (linked/standalone, recurring); meeting frequency | ✅ |
 | 5 | Exam / project tracker — countdowns, done toggle, calendar markers (`0002`); task subtasks | ✅ |
 | 6 | Dashboard — `/today`: stat tiles, today's schedule + due tasks, 7-day "Coming up" | ✅ |
-| 7 | Habits — counter / checklist habits, quick-tap logging, streaks, 30-day history, dashboard panel | ✅ |
+| 7 | Habits — counter / checklist habits, quick-tap logging, streaks, 30-day history | ✅ |
 | 8 | Budgeting — categories with monthly limits, expense/income logging, per-category progress, month summary | ✅ |
 | 9 | Polish — green-pastel light/dark theme, Caveat/Nunito type, ⌘K search, perceived-perf + a11y sweep | ✅ |
 
@@ -140,7 +140,7 @@ src/
     nav/                   Sidebar, bottom tab bar, mobile header (+ ⌘K search button)
     search/                ⌘K command palette (search-palette / search-button)
     settings/              theme-toggle.tsx (Light / System / Dark)
-    dashboard/             stat tiles + "Coming up" list + habits panel
+    dashboard/             stat tiles + Today panel + "Coming up" list
     habit/                 habit card / tracker (optimistic quick-tap) / form / history
     budget/                overview / category + transaction forms / progress bars / quick-add
     *-form.tsx *-card.tsx  Semester/class forms, cards, editors

@@ -9,7 +9,7 @@ import { Dashboard } from "@/components/dashboard/dashboard";
 export const metadata: Metadata = { title: "Today" };
 
 export default async function TodayPage() {
-  const [user, { sources, openTaskCount, habits }] = await Promise.all([
+  const [user, { sources, openTaskCount }] = await Promise.all([
     requireUser(),
     getDashboardData(),
   ]);
@@ -34,7 +34,7 @@ export default async function TodayPage() {
         </p>
       </header>
 
-      <Dashboard sources={sources} openTaskCount={openTaskCount} habits={habits} />
+      <Dashboard sources={sources} openTaskCount={openTaskCount} />
 
       {!activeSemester && (
         <div className="rounded-2xl border border-dashed border-black/15 bg-white/50 p-5 text-sm dark:border-white/15 dark:bg-white/[0.02]">

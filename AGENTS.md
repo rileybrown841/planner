@@ -103,8 +103,8 @@ applied (`0002`–`0004` via MCP `apply_migration`). Phases 7–9 added no schem
 - **Quick-tap:** `<HabitTracker habits logs>` (client) holds `useOptimistic`
   over the logs array + `useTransition` around `logHabit` (a plain
   `(FormData)=>void` action, `increment|decrement|toggle`; 0 removes the row).
-  Renders `<HabitCard>` per habit. Used on `/habits`, `/habits/[id]`, and the
-  dashboard "Habits" `<Panel>` (active habits only, hidden when there are none).
+  Renders `<HabitCard>` per habit. Used on `/habits` and `/habits/[id]`. (It was
+  briefly on the `/today` dashboard too; the user removed that panel.)
 - **Routes:** `/habits` (active `<HabitTracker>` + archived `<details>`),
   `/habits/new`, `/habits/[id]` (today tracker + `<HabitHistory>` = 3 stat tiles
   + 30-day strip), `/habits/[id]/edit`. `<HabitForm>` has a controlled
@@ -117,10 +117,9 @@ applied (`0002`–`0004` via MCP `apply_migration`). Phases 7–9 added no schem
 ## Phase 6 (dashboard)
 
 `/today` is the dashboard (PWA start_url). Page fetches `getDashboardData()`
-(`src/lib/data/dashboard.ts` = `getCalendarSources()` + `countOpenTasks()` +
-`getHabitsData()`) and hands it to `<Dashboard>` (client) which computes
-everything in the viewer's timezone: 3 stat tiles (`<StatTile>`), a Habits panel
-(`<HabitTracker>`, Phase 7), a Today panel (reuses `<TodaySchedule>` +
+(`src/lib/data/dashboard.ts` = `getCalendarSources()` + `countOpenTasks()`) and
+hands it to `<Dashboard>` (client) which computes everything in the viewer's
+timezone: 3 stat tiles (`<StatTile>`), a Today panel (reuses `<TodaySchedule>` +
 `<DueSoon>`), and `<ComingUp>` (next-7-days all-day items via
 `buildCalendarItems`, grouped by day).
 
