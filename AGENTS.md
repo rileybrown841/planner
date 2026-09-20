@@ -140,6 +140,25 @@ timezone: 3 stat tiles (`<StatTile>`), a Today panel (reuses `<TodaySchedule>` +
   the full task list; `assessmentStepCounts()` does the same for `/exams` cards.
 - `getTask` fetches the parent row in a second query (self-FK embed avoided).
 
+### Follow-up: check off exams/projects from `/today` and `/tasks`
+
+- **`<AssessmentChecklist assessments>`** (`src/components/assessment/`) —
+  `TaskChecklist`'s pattern applied to assessments: `useOptimistic` flips
+  `completed_at` in place (the row stays and shows a strikethrough, so a mis-tap
+  is undoable by tapping again) while `toggleAssessmentDone` runs. Renders
+  `<AssessmentRow>` (mirrors `TaskRow`).
+- Used in two places, both **separate from task lists**, not merged into them:
+  the dashboard's "Today" panel (new "Exams & projects" subsection, fed by
+  `sources.assessments` — the same `listOpenAssessments()` data the "Next exam /
+  project" stat tile reads) and `/tasks` (its own section above `<TaskBoard>`,
+  fed by a fresh `listOpenAssessments()` call).
+- The stat tile needs no new logic: once a checked-off assessment's
+  `completed_at` is set, the next page revalidation drops it from
+  `listOpenAssessments()`/`sources.assessments`, and `nextAssessment` (already a
+  `useMemo` over that array) picks the next-nearest one automatically — same
+  eventual-consistency timing as the "Due today" tile reacting to a task checked
+  off in `<DueSoon>`.
+
 ## Phase 4 additions (calendar, events, meeting recurrence)
 
 - **Meeting recurrence:** `Meeting` (was `ClassMeeting`) gains `freq?`
