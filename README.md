@@ -1,10 +1,10 @@
 # Planner
 
 A personal, single-user digital planner — classes and semesters, fast task
-capture, a unified calendar, exam/project countdowns, habit tracking and simple
-budgeting. Built as a Progressive Web App so it installs on an iPhone home screen
-and works as a normal responsive site on a laptop, with data synced through
-Supabase.
+capture, a unified calendar, exam/project countdowns, habit tracking, simple
+budgeting, and a Pomodoro focus timer. Built as a Progressive Web App so it
+installs on an iPhone home screen and works as a normal responsive site on a
+laptop, with data synced through Supabase.
 
 See [`projectplan.md`](projectplan.md) for the full product plan and phased build
 order.
@@ -29,6 +29,12 @@ semester break periods (`semesters.breaks`) and repeating-event end dates
 recurring occurrence from the calendar. Phases 7 and 8 needed no migration — the
 `habits` / `habit_logs` / `budget_categories` / `transactions` tables were all
 already in `0001`.
+
+**Post-phase additions** (feature requests after the plan's 9 phases): letting
+exams/projects be checked off from `/today` and `/tasks`, not just `/exams`; a
+`/pomodoro` focus timer with adjustable intervals and a per-session task list
+(no schema — session/timer state lives in `localStorage`, tasks are the real
+`tasks` table).
 
 ## Tech stack
 
@@ -131,6 +137,7 @@ src/
       extracurriculars/     Clubs/jobs/sports CRUD; [id]/[id]/edit
       habits/               Counter / checklist habits; quick-tap log, streaks, [id] history
       budget/               Month overview + category / transaction CRUD; transactions/ log
+      pomodoro/             Focus timer — adjustable intervals + a session task list
       classes/ semesters/   Phase 2 — class & semester CRUD
       settings/             Account + display name
     login/  auth/callback/  Magic-link sign-in + single-user check
@@ -143,6 +150,8 @@ src/
     dashboard/             stat tiles + Today panel + "Coming up" list
     habit/                 habit card / tracker (optimistic quick-tap) / form / history
     budget/                overview / category + transaction forms / progress bars / quick-add
+    pomodoro/              timer (use-pomodoro hook) + per-session focus task list
+    assessment/            checklist/row shared by /exams, /today and /tasks
     *-form.tsx *-card.tsx  Semester/class forms, cards, editors
   lib/
     supabase/              client.ts / server.ts / proxy.ts / env.ts
@@ -152,6 +161,7 @@ src/
     schemas.ts form.ts     zod input schemas + ActionResult helpers
     dates.ts priority.ts   client-side task bucket / relative-due + priority helpers
     habits.ts budget.ts    client-safe streak/history and month-rollup maths
+    pomodoro.ts            pure phase-sequencing maths (the timer/session state is a hook)
     money.ts               $ formatting
     recurrence.ts calendar.ts   recurrence expansion + buildCalendarItems (client-safe)
     routes.ts nav.tsx      typed dynamic-route builders + nav config

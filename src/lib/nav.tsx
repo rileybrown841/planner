@@ -8,6 +8,7 @@ import {
   ListChecks,
   Settings,
   Sparkles,
+  Timer,
   Users,
   Wallet,
 } from "lucide-react";
@@ -35,6 +36,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/habits", label: "Habits", icon: Sparkles, primary: true },
   { href: "/budget", label: "Budget", icon: Wallet, primary: true },
   { href: "/exams", label: "Exams & projects", icon: GraduationCap },
+  { href: "/pomodoro", label: "Pomodoro", icon: Timer },
   {
     href: "/classes",
     label: "Classes & semesters",

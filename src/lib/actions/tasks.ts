@@ -13,6 +13,7 @@ function revalidateTaskViews() {
   revalidatePath("/tasks");
   revalidatePath("/today");
   revalidatePath("/calendar");
+  revalidatePath("/pomodoro");
 }
 
 function rawTask(formData: FormData) {
@@ -51,6 +52,29 @@ export async function createTaskQuick(
 
   revalidateTaskViews();
   return succeeded("Task added.");
+}
+
+/**
+ * Title-only capture from the Pomodoro focus list — called directly (not via
+ * `useActionState`), so it returns the new id straight away to pin it into
+ * the session instead of the shared `ActionResult` shape.
+ */
+export async function createQuickFocusTask(title: string): Promise<{ id: string } | { error: string }> {
+  await requireUser();
+  const trimmed = title.trim();
+  if (!trimmed) return { error: "Give it a title." };
+  if (trimmed.length > 200) return { error: "Keep it under 200 characters." };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("tasks")
+    .insert({ title: trimmed })
+    .select("id")
+    .single();
+  if (error) return { error: error.message };
+
+  revalidateTaskViews();
+  return { id: data.id };
 }
 
 export async function createTask(

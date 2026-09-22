@@ -11,9 +11,46 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Planner — project notes
 
 Single-user personal planner PWA. Full plan and phased build order in
-`projectplan.md`. **All nine phases are built.**
+`projectplan.md`. **All nine phases are built** — further work is feature
+requests, documented as their own sections below rather than numbered phases.
 Repo `github.com/rileybrown841/planner` (`main`). Migrations `0001`–`0004`
 applied (`0002`–`0004` via MCP `apply_migration`). Phases 7–9 added no schema.
+
+## Pomodoro timer (post-phase; not in `projectplan.md`)
+
+- **No schema.** The timer/session is a personal, one-device-at-a-time thing,
+  so its whole state (settings, phase, running, end time, focus-session count,
+  pinned task ids) lives in **`localStorage`** (`planner:pomodoro:v1`) via the
+  `usePomodoro()` hook (`src/components/pomodoro/use-pomodoro.ts`) — nothing
+  server-side to keep in sync. The "tasks to accomplish" are real `tasks` rows
+  though (see below), so those DO sync normally.
+- **Phase maths are pure** (`src/lib/pomodoro.ts`): `phaseSeconds`,
+  `nextPhase` (focus → short break, except every `sessionsUntilLongBreak`th
+  focus → long break; any break → focus), `formatClock`, `clampMinutes`/
+  `clampSessions` (1–180 / 1–12). `use-pomodoro.ts`'s own `advance()`/`resync()`
+  build on these — `resync` recomputes remaining time from an absolute `endAt`
+  timestamp every tick (and once on load), so background-tab throttling or a
+  closed tab can't cause drift; hitting 0 auto-advances the phase and **pauses**
+  (no sound/notification — the user explicitly didn't want that).
+  "Skip" calls the same `advance()` but marks the phase **not** completed, so
+  skipping a focus early doesn't count toward the long-break cadence.
+- **Settings inputs are uncontrolled** (`defaultValue` + `onBlur`, not
+  `value`+`onChange`) so clamping doesn't fight the user mid-keystroke; the
+  settings block is keyed on `pomo.hydrated` to force one remount when the
+  persisted values load (otherwise the uncontrolled fields would stay stuck on
+  whatever rendered before hydration).
+- **Focus tasks are real tasks.** `/pomodoro` fetches `listTasks()` (all open,
+  same helper `/tasks` uses) and `<FocusTasks>` lets you pin some of them (ids
+  only, in `usePomodoro`'s `focusTaskIds`) plus create a brand-new one via the
+  new `createQuickFocusTask(title)` action (`src/lib/actions/tasks.ts`) —
+  called directly, not through `useActionState`, because it needs to hand back
+  the new row's id to pin immediately. Checking one off in `<FocusTaskRow>`
+  calls the existing `setTaskStatus` (really completes it) **and** drops it
+  from the local pinned list; removing one (✕) only unpins it, task untouched.
+  `revalidateTaskViews()` in `actions/tasks.ts` now also revalidates
+  `/pomodoro`.
+- **Nav:** `/pomodoro` is a secondary item (`src/lib/nav.tsx`), not one of the
+  5 primary bottom-tab slots (already full: Today/Calendar/Tasks/Habits/Budget).
 
 ## Phase 9 (polish — theme, type, search, perf, a11y)
 
