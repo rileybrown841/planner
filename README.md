@@ -31,10 +31,12 @@ recurring occurrence from the calendar. Phases 7 and 8 needed no migration — t
 already in `0001`.
 
 **Post-phase additions** (feature requests after the plan's 9 phases): letting
-exams/projects be checked off from `/today` and `/tasks`, not just `/exams`; a
-`/pomodoro` focus timer with adjustable intervals and a per-session task list
-(no schema — session/timer state lives in `localStorage`, tasks are the real
-`tasks` table).
+exams/projects be checked off outside `/exams` too — a special "Exams &
+projects" callout on `/today`, and lumped into the normal bucketed list on
+`/tasks`; all-day events (birthdays, holidays, …) now show on `/today`'s
+schedule; a `/pomodoro` focus timer with adjustable intervals and a
+per-session task list (no schema — session/timer state lives in
+`localStorage`, tasks are the real `tasks` table).
 
 ## Tech stack
 
@@ -151,7 +153,7 @@ src/
     habit/                 habit card / tracker (optimistic quick-tap) / form / history
     budget/                overview / category + transaction forms / progress bars / quick-add
     pomodoro/              timer (use-pomodoro hook) + per-session focus task list
-    assessment/            checklist/row shared by /exams, /today and /tasks
+    assessment/            <AssessmentRow> (also in task/task-board.tsx) + the /today checklist
     *-form.tsx *-card.tsx  Semester/class forms, cards, editors
   lib/
     supabase/              client.ts / server.ts / proxy.ts / env.ts

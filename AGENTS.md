@@ -160,6 +160,15 @@ timezone: 3 stat tiles (`<StatTile>`), a Today panel (reuses `<TodaySchedule>` +
 `<DueSoon>`), and `<ComingUp>` (next-7-days all-day items via
 `buildCalendarItems`, grouped by day).
 
+`<TodaySchedule>` filters today's `buildCalendarItems` to `!allDay || kind ===
+"event"` — timed classes/activities/events plus **all-day events** (birthdays,
+holidays, …), sorted with all-day ones first and labelled "All day" instead of
+a time. All-day tasks/assessments/breaks are deliberately excluded here (they
+have their own dashboard sections) — only `kind: "event"` gets the all-day
+exception. All-day events already had full CRUD (the `all_day` checkbox on
+`<EventForm>`); the gap was just that a same-day one didn't show anywhere on
+`/today` before (`<ComingUp>` starts at tomorrow).
+
 ## Phase 5 additions (exam/project tracker, task subtasks)
 
 - **Assessments** (`assessments` table) = exams & projects: CRUD at `/exams`,
@@ -183,18 +192,28 @@ timezone: 3 stat tiles (`<StatTile>`), a Today panel (reuses `<TodaySchedule>` +
   `TaskChecklist`'s pattern applied to assessments: `useOptimistic` flips
   `completed_at` in place (the row stays and shows a strikethrough, so a mis-tap
   is undoable by tapping again) while `toggleAssessmentDone` runs. Renders
-  `<AssessmentRow>` (mirrors `TaskRow`).
-- Used in two places, both **separate from task lists**, not merged into them:
-  the dashboard's "Today" panel (new "Exams & projects" subsection, fed by
-  `sources.assessments` — the same `listOpenAssessments()` data the "Next exam /
-  project" stat tile reads) and `/tasks` (its own section above `<TaskBoard>`,
-  fed by a fresh `listOpenAssessments()` call).
-- The stat tile needs no new logic: once a checked-off assessment's
-  `completed_at` is set, the next page revalidation drops it from
-  `listOpenAssessments()`/`sources.assessments`, and `nextAssessment` (already a
-  `useMemo` over that array) picks the next-nearest one automatically — same
-  eventual-consistency timing as the "Due today" tile reacting to a task checked
-  off in `<DueSoon>`.
+  `<AssessmentRow>` (mirrors `TaskRow`). Used only on the dashboard now (its
+  "Today" panel's "Exams & projects" subsection, fed by `sources.assessments` —
+  the same `listOpenAssessments()` data the "Next exam / project" stat tile
+  reads) — the **special callout the user asked to keep**. The stat tile needs
+  no extra logic for this: once a checked-off assessment's `completed_at` is
+  set, the next revalidation drops it from `sources.assessments`, and
+  `nextAssessment` (a `useMemo` over that array) picks the next one — same
+  eventual-consistency timing as "Due today" reacting to a task checked off in
+  `<DueSoon>`.
+- **`/tasks` instead lumps them into `<TaskBoard>`** (the user's ask: "treated
+  as any normal task"). `TaskBoard` now optionally takes `assessments` too, runs
+  a **second** `useOptimistic`/`toggleAssessmentDone` pair alongside the tasks
+  one, and normalises both into a common `Entry` (`dueDate`/`rank`/`done`/
+  `completedAt`) before bucketing — so an exam sits in "Today"/"This week"/etc.
+  right alongside tasks, sorted the same way (due date, then rank — assessments
+  get a neutral "medium" rank since they have no priority), and shares the same
+  "Done" `<details>`. Each `Entry` still renders as `<AssessmentRow>` (not
+  `<TaskRow>`) so the kind chip keeps them visually distinguishable. The page
+  fetches `listAssessments()` (all, not just open, so done ones populate the
+  merged Done section) and only applies its **class** filter to them
+  (`a.class_id === classId`) — the activity/priority filters don't apply to
+  assessments, so those two leave them alone rather than hiding them.
 
 ## Phase 4 additions (calendar, events, meeting recurrence)
 

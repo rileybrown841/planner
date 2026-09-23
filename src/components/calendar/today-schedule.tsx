@@ -21,13 +21,21 @@ function timeRange(start: Date, end: Date | null): string {
   return `${clock(start, !sameHalf)}–${clock(end)}`;
 }
 
-/** Compact list of today's timed classes / activities / events (local day). */
+/**
+ * Compact list of today's timed classes / activities / events, plus any
+ * all-day events (birthdays, holidays, …) — those sort first and show "All
+ * day" instead of a time. All-day tasks/exams/breaks live in their own
+ * dashboard sections, not here.
+ */
 export function TodaySchedule({ sources }: { sources: CalendarSourceData }) {
   const items = useMemo(() => {
     const start = startOfDay(new Date());
     return buildCalendarItems(sources, start, addDays(start, 1))
-      .filter((i) => !i.allDay)
-      .sort((a, b) => a.start.getTime() - b.start.getTime());
+      .filter((i) => !i.allDay || i.kind === "event")
+      .sort((a, b) => {
+        if (a.allDay !== b.allDay) return a.allDay ? -1 : 1;
+        return a.start.getTime() - b.start.getTime();
+      });
   }, [sources]);
 
   if (items.length === 0) {
@@ -40,7 +48,7 @@ export function TodaySchedule({ sources }: { sources: CalendarSourceData }) {
         <li key={i.key}>
           <Link href={i.href} className="flex items-center gap-2.5 text-sm">
             <span className="w-24 shrink-0 text-right text-xs tabular-nums text-zinc-500">
-              {timeRange(i.start, i.end)}
+              {i.allDay ? "All day" : timeRange(i.start, i.end)}
             </span>
             <span aria-hidden className="size-2 shrink-0 rounded-full" style={colorDotStyle(i.color)} />
             <span className="truncate">{i.title}</span>

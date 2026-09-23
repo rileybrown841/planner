@@ -4,13 +4,12 @@ import { Plus } from "lucide-react";
 import { listTasks } from "@/lib/data/tasks";
 import { listClassPickerOptions } from "@/lib/data/classes";
 import { listExtracurriculars } from "@/lib/data/extracurriculars";
-import { listOpenAssessments } from "@/lib/data/assessments";
+import { listAssessments } from "@/lib/data/assessments";
 import { PRIORITIES } from "@/lib/priority";
 import type { TaskPriority } from "@/lib/types";
 import { buttonClass } from "@/components/ui/button";
 import { TaskFilters } from "@/components/task/task-filters";
 import { TaskBoard } from "@/components/task/task-board";
-import { AssessmentChecklist } from "@/components/assessment/assessment-checklist";
 
 export const metadata: Metadata = { title: "Tasks" };
 
@@ -28,8 +27,12 @@ export default async function TasksPage({ searchParams }: PageProps<"/tasks">) {
     listTasks({ classId, activityId, priority, includeDone: true }),
     listClassPickerOptions(),
     listExtracurriculars(),
-    listOpenAssessments(),
+    listAssessments(),
   ]);
+
+  // Exams/projects have no activity or priority of their own, so only the
+  // class filter (which they do have) narrows them; the others leave them be.
+  const boardAssessments = classId ? assessments.filter((a) => a.class_id === classId) : assessments;
 
   return (
     <section className="flex flex-col gap-5">
@@ -47,23 +50,8 @@ export default async function TasksPage({ searchParams }: PageProps<"/tasks">) {
         </p>
       )}
 
-      <section className="flex flex-col gap-1">
-        <div className="flex items-center justify-between px-2">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
-            Exams &amp; projects
-          </h2>
-          <Link href="/exams" className="text-xs text-indigo-600 hover:underline dark:text-indigo-400">
-            All exams →
-          </Link>
-        </div>
-        <AssessmentChecklist
-          assessments={assessments}
-          emptyText="No exams or projects need attention."
-        />
-      </section>
-
       <TaskFilters classGroups={classGroups} activities={activities} />
-      <TaskBoard tasks={tasks} />
+      <TaskBoard tasks={tasks} assessments={boardAssessments} />
     </section>
   );
 }
