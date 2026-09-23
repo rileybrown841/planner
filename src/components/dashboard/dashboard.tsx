@@ -10,7 +10,6 @@ import { StatTile } from "@/components/dashboard/stat-tile";
 import { ComingUp } from "@/components/dashboard/coming-up";
 import { TodaySchedule } from "@/components/calendar/today-schedule";
 import { DueSoon } from "@/components/task/due-soon";
-import { AssessmentChecklist } from "@/components/assessment/assessment-checklist";
 
 function Panel({
   title,
@@ -88,15 +87,6 @@ export function Dashboard({
                 Due today &amp; overdue
               </h3>
               <DueSoon tasks={sources.tasks} />
-            </div>
-            <div>
-              <h3 className="mb-1.5 text-[0.7rem] font-medium uppercase tracking-wide text-zinc-400">
-                Exams &amp; projects
-              </h3>
-              <AssessmentChecklist
-                assessments={sources.assessments}
-                emptyText="Nothing upcoming."
-              />
             </div>
           </div>
         </Panel>

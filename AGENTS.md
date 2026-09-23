@@ -186,34 +186,32 @@ exception. All-day events already had full CRUD (the `all_day` checkbox on
   the full task list; `assessmentStepCounts()` does the same for `/exams` cards.
 - `getTask` fetches the parent row in a second query (self-FK embed avoided).
 
-### Follow-up: check off exams/projects from `/today` and `/tasks`
+### Follow-up: check off exams/projects outside `/exams`
 
-- **`<AssessmentChecklist assessments>`** (`src/components/assessment/`) —
-  `TaskChecklist`'s pattern applied to assessments: `useOptimistic` flips
-  `completed_at` in place (the row stays and shows a strikethrough, so a mis-tap
-  is undoable by tapping again) while `toggleAssessmentDone` runs. Renders
-  `<AssessmentRow>` (mirrors `TaskRow`). Used only on the dashboard now (its
-  "Today" panel's "Exams & projects" subsection, fed by `sources.assessments` —
-  the same `listOpenAssessments()` data the "Next exam / project" stat tile
-  reads) — the **special callout the user asked to keep**. The stat tile needs
-  no extra logic for this: once a checked-off assessment's `completed_at` is
-  set, the next revalidation drops it from `sources.assessments`, and
-  `nextAssessment` (a `useMemo` over that array) picks the next one — same
-  eventual-consistency timing as "Due today" reacting to a task checked off in
-  `<DueSoon>`.
-- **`/tasks` instead lumps them into `<TaskBoard>`** (the user's ask: "treated
-  as any normal task"). `TaskBoard` now optionally takes `assessments` too, runs
-  a **second** `useOptimistic`/`toggleAssessmentDone` pair alongside the tasks
+- **`/tasks` lumps them into `<TaskBoard>`** (the user's ask: "treated as any
+  normal task"). `TaskBoard` optionally takes `assessments` too, runs a
+  **second** `useOptimistic`/`toggleAssessmentDone` pair alongside the tasks
   one, and normalises both into a common `Entry` (`dueDate`/`rank`/`done`/
   `completedAt`) before bucketing — so an exam sits in "Today"/"This week"/etc.
   right alongside tasks, sorted the same way (due date, then rank — assessments
   get a neutral "medium" rank since they have no priority), and shares the same
-  "Done" `<details>`. Each `Entry` still renders as `<AssessmentRow>` (not
-  `<TaskRow>`) so the kind chip keeps them visually distinguishable. The page
-  fetches `listAssessments()` (all, not just open, so done ones populate the
-  merged Done section) and only applies its **class** filter to them
-  (`a.class_id === classId`) — the activity/priority filters don't apply to
-  assessments, so those two leave them alone rather than hiding them.
+  "Done" `<details>`. Each `Entry` still renders as `<AssessmentRow>` (mirrors
+  `TaskRow`, not the same component) so the kind chip keeps them visually
+  distinguishable. The page fetches `listAssessments()` (all, not just open, so
+  done ones populate the merged Done section) and only applies its **class**
+  filter to them (`a.class_id === classId`) — the activity/priority filters
+  don't apply to assessments, so those two leave them alone rather than hiding
+  them.
+- **`/today`'s dashboard stays checklist-free** — a checkable "Exams & projects"
+  list briefly lived in its "Today" panel (`<AssessmentChecklist>`) but the user
+  had it removed again; `<AssessmentChecklist>` is deleted (it had no other
+  callers). The **"Next exam / project" stat tile is the only exam/project
+  surface on `/today`** now, and needs no special logic to stay current: it's a
+  `useMemo` over `sources.assessments` (`listOpenAssessments()`), so once an
+  assessment is checked off anywhere (its `completed_at` is set), the next
+  revalidation drops it from that array and the tile picks the next one —
+  same eventual-consistency timing as "Due today" reacting to a task checked
+  off in `<DueSoon>`.
 
 ## Phase 4 additions (calendar, events, meeting recurrence)
 
