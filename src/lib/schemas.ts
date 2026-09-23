@@ -137,7 +137,7 @@ export const eventSchema = z
     location: optionalText(200),
     notes: optionalText(2000),
     recurrence: z
-      .union([z.enum(["weekly", "biweekly", "monthly"]), z.literal("")])
+      .union([z.enum(["weekly", "biweekly", "monthly", "yearly"]), z.literal("")])
       .transform((v) => (v ? v : null)),
     recurrence_until: z
       .union([z.iso.date(), z.literal("")])

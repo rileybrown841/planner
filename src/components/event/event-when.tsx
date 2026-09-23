@@ -1,7 +1,7 @@
 "use client";
 
-import type { MeetingFreq } from "@/lib/types";
-import { FREQ_LABEL } from "@/lib/days";
+import type { EventRecurrenceRule } from "@/lib/types";
+import { EVENT_FREQ_LABEL } from "@/lib/days";
 
 const time = (d: Date) =>
   d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
@@ -24,7 +24,7 @@ export function EventWhen({
   startsAt: string;
   endsAt: string | null;
   allDay: boolean;
-  recurrence: MeetingFreq | null;
+  recurrence: EventRecurrenceRule | null;
   until?: string | null;
 }) {
   const start = new Date(startsAt);
@@ -44,7 +44,7 @@ export function EventWhen({
       {when}
       {recurrence && (
         <span className="text-zinc-500">
-          {" "}· repeats {FREQ_LABEL[recurrence].toLowerCase()}
+          {" "}· repeats {EVENT_FREQ_LABEL[recurrence].toLowerCase()}
           {until && ` until ${dateMed(until)}`}
         </span>
       )}

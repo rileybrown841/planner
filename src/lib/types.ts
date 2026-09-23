@@ -9,6 +9,13 @@ export type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 
 export type MeetingFreq = "weekly" | "biweekly" | "monthly";
 
+/**
+ * Events can additionally repeat yearly (birthdays, holidays) — classes and
+ * activities never do, so this stays separate from `MeetingFreq` rather than
+ * widening it.
+ */
+export type EventRecurrenceRule = MeetingFreq | "yearly";
+
 export interface Meeting {
   day: DayKey;
   /** 24h "HH:MM" */
@@ -174,8 +181,8 @@ export interface EventRow {
   all_day: boolean;
   location: string | null;
   notes: string | null;
-  /** null | "weekly" | "biweekly" | "monthly" — anchor is `starts_at`. */
-  recurrence_rule: MeetingFreq | null;
+  /** null | "weekly" | "biweekly" | "monthly" | "yearly" — anchor is `starts_at`. */
+  recurrence_rule: EventRecurrenceRule | null;
   /** "YYYY-MM-DD" — last day a recurring occurrence may land on. null ⇒ forever. */
   recurrence_until: string | null;
   /** "YYYY-MM-DD" dates where a single occurrence of a recurring event was cancelled. */

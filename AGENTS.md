@@ -249,6 +249,28 @@ exception. All-day events already had full CRUD (the `all_day` checkbox on
 - `maxDate`/`minDate` now live in `src/lib/dates.ts` (were private in
   `recurrence.ts`).
 
+### Follow-up: yearly-recurring events (no migration)
+
+- **`events.recurrence_rule` is a plain `text` column** (not a Postgres enum),
+  so adding the `"yearly"` token needed no schema change — just widening the
+  TypeScript side. `EventRecurrenceRule` (`src/lib/types.ts`) =
+  `MeetingFreq | "yearly"`, kept **separate** from `MeetingFreq` itself — classes
+  and activities never repeat yearly, so `Meeting.freq`/`meetingSchema`/
+  `<MeetingsEditor>` are untouched and still only offer weekly/biweekly/monthly.
+- **`yearlyDates()`** in `src/lib/recurrence.ts` (private; reached through
+  `eventStartDates(startsAt, freq, from, to, until)` when `freq === "yearly"`)
+  transplants the anchor's month/day/time onto each candidate year, filters to
+  `[from, to)`, and never yields anything before the anchor's own first
+  occurrence. **A Feb 29 anchor observes on Feb 28 in non-leap years** (so a
+  leap-day birthday shows up every year, not just every 4th) rather than being
+  skipped — deliberate choice, differs from a strict RRULE implementation.
+  `recurrence_until` ("Ends") applies the same way it does to weekly/biweekly/
+  monthly series.
+- **`EVENT_FREQ_LABEL`** (`src/lib/days.ts`) = `{...FREQ_LABEL, yearly: "Yearly"}`
+  — the event-only label map (`<EventForm>`'s Repeats select, `<EventWhen>`'s
+  "repeats yearly" text). Don't add `"yearly"` to the shared `FREQ_LABEL` itself,
+  it's typed against `Meeting["freq"]` and used for class/activity meeting text.
+
 ### Follow-up: per-occurrence delete (migration `0004`)
 
 - **`classes.skip_dates` / `extracurriculars.skip_dates` / `events.skip_dates`**

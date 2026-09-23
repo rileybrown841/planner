@@ -3,7 +3,7 @@
  * patterns (none / weekly / biweekly / monthly-by-weekday), so the math is
  * small. All dates are the viewer's local time.
  */
-import type { Meeting, MeetingFreq } from "@/lib/types";
+import type { EventRecurrenceRule, Meeting, MeetingFreq } from "@/lib/types";
 import { DAYKEY_TO_JS, JS_TO_DAYKEY } from "@/lib/days";
 import { addDays, fromDateKey, maxDate, minDate, startOfDay, toDateKey } from "@/lib/dates";
 
@@ -82,13 +82,40 @@ export function meetingDates(
   return out;
 }
 
+function isLeapYear(year: number): boolean {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+/**
+ * `startsAt`'s month/day/time, transplanted onto `year`. A Feb 29 anchor
+ * observes on Feb 28 in non-leap years (rather than skipping 3 years out of 4).
+ */
+function yearlyOccurrence(startsAt: Date, year: number): Date {
+  const month = startsAt.getMonth();
+  const isLeapDay = month === 1 && startsAt.getDate() === 29;
+  const day = isLeapDay && !isLeapYear(year) ? 28 : startsAt.getDate();
+  const d = new Date(year, month, day);
+  d.setHours(startsAt.getHours(), startsAt.getMinutes(), 0, 0);
+  return d;
+}
+
+/** Yearly occurrences of `startsAt` in [from, to), never before `startsAt` itself. */
+function yearlyDates(startsAt: Date, from: Date, to: Date): Date[] {
+  const out: Date[] = [];
+  for (let year = from.getFullYear() - 1; year <= to.getFullYear() + 1; year++) {
+    const occ = yearlyOccurrence(startsAt, year);
+    if (occ >= startsAt && occ >= from && occ < to) out.push(occ);
+  }
+  return out.sort((a, b) => a.getTime() - b.getTime());
+}
+
 /**
  * Occurrence start Dates (with time) for an event in [from, to).
  * `until` ("YYYY-MM-DD", inclusive) caps a recurring series' last occurrence.
  */
 export function eventStartDates(
   startsAt: Date,
-  freq: MeetingFreq | null,
+  freq: EventRecurrenceRule | null,
   from: Date,
   to: Date,
   until?: string | null,
@@ -97,6 +124,11 @@ export function eventStartDates(
     return startsAt >= from && startsAt < to ? [new Date(startsAt)] : [];
   }
   const hi = until ? minDate(to, addDays(fromDateKey(until), 1)) : to;
+
+  if (freq === "yearly") {
+    return yearlyDates(startsAt, from, hi);
+  }
+
   const meeting: Meeting = {
     day: JS_TO_DAYKEY[startsAt.getDay()],
     start: "00:00",

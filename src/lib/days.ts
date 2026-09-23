@@ -1,4 +1,4 @@
-import type { DayKey, Meeting } from "@/lib/types";
+import type { DayKey, EventRecurrenceRule, Meeting } from "@/lib/types";
 
 export const DAY_KEYS = [
   "mon",
@@ -47,6 +47,12 @@ export const FREQ_LABEL: Record<NonNullable<Meeting["freq"]>, string> = {
   weekly: "Weekly",
   biweekly: "Every 2 weeks",
   monthly: "Monthly",
+};
+
+/** Events can also repeat yearly (birthdays, holidays) — classes/activities never do. */
+export const EVENT_FREQ_LABEL: Record<EventRecurrenceRule, string> = {
+  ...FREQ_LABEL,
+  yearly: "Yearly",
 };
 
 /** "09:00" -> "9:00 AM" */

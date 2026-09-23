@@ -34,8 +34,9 @@ already in `0001`.
 projects are now checkable from `/tasks` too, lumped right into the normal
 bucketed list (the "Next exam / project" stat tile is still the one
 exam/project callout on `/today`); all-day events (birthdays, holidays, …) now
-show on `/today`'s schedule; a `/pomodoro` focus timer with adjustable
-intervals and a
+show on `/today`'s schedule; events can repeat **yearly** as well as
+weekly/biweekly/monthly (no migration — `recurrence_rule` is a plain text
+column); a `/pomodoro` focus timer with adjustable intervals and a
 per-session task list (no schema — session/timer state lives in
 `localStorage`, tasks are the real `tasks` table).
 

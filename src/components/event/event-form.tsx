@@ -6,7 +6,7 @@ import type { Route } from "next";
 import type { ClassPickerGroup } from "@/lib/data/classes";
 import type { EventWithLinks, Extracurricular } from "@/lib/types";
 import { IDLE_RESULT, type ActionResult } from "@/lib/form";
-import { FREQ_LABEL } from "@/lib/days";
+import { EVENT_FREQ_LABEL } from "@/lib/days";
 import { toDateKey } from "@/lib/dates";
 import { FormField, controlClass } from "@/components/ui/form-field";
 import { Button, buttonClass } from "@/components/ui/button";
@@ -142,9 +142,10 @@ export function EventForm({
             className={controlClass}
           >
             <option value="">Does not repeat</option>
-            <option value="weekly">{FREQ_LABEL.weekly}</option>
-            <option value="biweekly">{FREQ_LABEL.biweekly}</option>
-            <option value="monthly">{FREQ_LABEL.monthly}</option>
+            <option value="weekly">{EVENT_FREQ_LABEL.weekly}</option>
+            <option value="biweekly">{EVENT_FREQ_LABEL.biweekly}</option>
+            <option value="monthly">{EVENT_FREQ_LABEL.monthly}</option>
+            <option value="yearly">{EVENT_FREQ_LABEL.yearly}</option>
           </select>
         </FormField>
         {recurrence && (
